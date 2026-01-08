@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Révision Examen – 3ème Primaire (v5)</title>
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --text:#111; --muted:#444;
+  --border:#dfe3ee; --accent:#0b57d0; --accent2:#111;
+  --ok:#0b6b2a; --bad:#b00020; --warn:#8a6d00;
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+  --radius: 18px;
+}
+[data-theme="dark"]{
+  --bg:#0f1117; --card:#171a22; --text:#f3f4f6; --muted:#b6bbc7;
+  --border:#2a2f3b; --accent:#67b7ff; --accent2:#e5e7eb;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:var(--bg); color:var(--text);
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+.container{display:flex; min-height:100vh;}
+/* Topbar */
+.topbar{
+  position:sticky; top:0; z-index:30;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; background:var(--card); border-bottom:1px solid var(--border);
+}
+.brand{display:flex; gap:10px; align-items:center}
+.brand h1{font-size:16px; margin:0; line-height:1.1}
+.brand .sub{font-size:12px; color:var(--muted)}
+.iconBtn{
+  border:1px solid var(--border); background:var(--card); color:var(--text);
+  border-radius:12px; padding:8px 10px; font-weight:800; cursor:pointer;
+}
+.iconBtn:active{transform:scale(.98)}
+.controls{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.pill{
+  border:1px solid var(--border); background:var(--card); color:var(--text);
+  border-radius:999px; padding:8px 10px; font-weight:800; cursor:pointer;
+}
+.pill.active{border-color:var(--accent); box-shadow: 0 0 0 3px rgba(103,183,255,.18)}
+select, input[type="text"], input[type="number"], textarea{
+  width:100%; padding:10px 12px; border:1px solid var(--border);
+  border-radius:12px; background:var(--card); color:var(--text);
+  font-weight:700;
+}
+textarea{min-height:90px; resize:vertical}
+small,.muted{color:var(--muted)}
+
+/* Sidebar */
+.sidebar{
+  width:320px; max-width:85vw;
+  background:var(--card); border-right:1px solid var(--border);
+  padding:12px;
+  position:fixed; inset:0 auto 0 0; transform:translateX(-110%);
+  transition:transform .25s ease; z-index:50; overflow:auto;
+}
+.sidebar.open{transform:translateX(0)}
+.sideTop{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.sideTop h2{margin:0; font-size:16px}
+.navGroup{margin:12px 0 0}
+.navTitle{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:14px 0 8px}
+.navbtn{
+  width:100%; text-align:left; padding:10px 10px; border:1px solid var(--border);
+  border-radius:14px; background:var(--card); color:var(--text);
+  margin:6px 0; cursor:pointer; font-weight:900;
+}
+.navbtn.active{border-color:var(--accent); box-shadow:0 0 0 3px rgba(103,183,255,.18)}
+.badge{float:right; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted)}
+hr{border:none; border-top:1px solid var(--border); margin:12px 0}
+
+/* Main */
+.main{flex:1; margin-left:0; width:100%;}
+.pageWrap{max-width:980px; margin:0 auto; padding:14px 12px 80px;}
+.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; margin:12px 0;}
+.card h2{margin:0 0 10px; font-size:20px}
+.card h3{margin:12px 0 8px; font-size:16px}
+.row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+@media (max-width: 820px){ .row{grid-template-columns:1fr} }
+.kpis{display:grid; grid-template-columns: repeat(3,1fr); gap:10px}
+@media (max-width: 820px){ .kpis{grid-template-columns:1fr} }
+.kpi{padding:10px; border:1px dashed var(--border); border-radius:16px; background:rgba(0,0,0,.02)}
+[data-theme="dark"] .kpi{background:rgba(255,255,255,.03)}
+.kpi b{font-size:18px}
+.progress{height:10px; border-radius:999px; background:rgba(0,0,0,.08); overflow:hidden; border:1px solid var(--border)}
+.progress > div{height:100%; width:0%; background:var(--accent)}
+
+/* Theme cards */
+.themeHeader{display:flex; gap:10px; align-items:flex-start; justify-content:space-between}
+.themeHeader .left{flex:1}
+.themeHeader .right{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.tag{font-size:12px; padding:3px 10px; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
+.btn{
+  border:1px solid var(--border); background:var(--card); color:var(--text);
+  border-radius:14px; padding:10px 12px; cursor:pointer; font-weight:900;
+}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:white}
+.btn.ok{border-color:rgba(11,107,42,.35)}
+.btn.bad{border-color:rgba(176,0,32,.35)}
+.btn:active{transform:scale(.985)}
+.collapsible{border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-top:10px}
+.collapsible summary{list-style:none; cursor:pointer; padding:10px 12px; font-weight:900; display:flex; align-items:center; justify-content:space-between; gap:10px}
+.collapsible summary::-webkit-details-marker{display:none}
+.collapsible .content{padding:10px 12px; border-top:1px solid var(--border)}
+.list{margin:0; padding-left:20px}
+.notice{padding:10px 12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.02)}
+[data-theme="dark"] .notice{background:rgba(255,255,255,.03)}
+.good{color:var(--ok); font-weight:900}
+.bad{color:var(--bad); font-weight:900}
+.warn{color:var(--warn); font-weight:900}
+.answer{display:none; margin-top:8px; padding:10px 12px; border-radius:14px; border:1px dashed var(--border); color:var(--muted)}
+.answer.show{display:block}
+.exerciseItem{margin:10px 0; padding:10px; border:1px solid var(--border); border-radius:16px}
+.exerciseItem .top{display:flex; gap:10px; align-items:flex-start; justify-content:space-between}
+.exerciseItem .top b{display:block}
+.exerciseItem .grid{display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center}
+@media(max-width:820px){ .exerciseItem .grid{grid-template-columns:1fr} }
+.opt{display:flex; gap:8px; align-items:center; margin:6px 0}
+.opt input{accent-color:var(--accent)}
+
+.photoRow{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:8px}
+@media(max-width:820px){ .photoRow{grid-template-columns:1fr} }
+.figure{border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--card)}
+.figure img{display:block; width:100%; height:180px; object-fit:cover; background:#eee}
+.figure .cap{padding:8px 10px; font-size:12px; color:var(--muted)}
+body[data-img="none"] .figure{display:none !important}
+body[data-img="svg"] .figure img{display:none !important}
+body[data-img="svg"] .figure .cap::before{content:"Dessin: "; font-weight:900}
+body[data-img="photos"] .figure .cap::before{content:"Photo: "; font-weight:900}
+svg.emoji{width:100%; height:180px; display:none; background:linear-gradient(180deg, rgba(0,0,0,.02), transparent)}
+body[data-img="svg"] svg.emoji{display:block}
+/* Arabic */
+.arPage{direction:rtl; text-align:right; font-family:"Noto Naskh Arabic","Amiri","Scheherazade New",serif; font-size:18px; line-height:1.9}
+.arPage h2,.arPage h3{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; direction:ltr; text-align:left}
+.arPage .tag{direction:ltr}
+.arPage .opt{justify-content:flex-end}
+.arPage select,.arPage input,.arPage textarea{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; direction:rtl}
+/* Exam */
+.examBox{display:grid; gap:10px}
+.examNav{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.qGrid{display:grid; grid-template-columns: repeat(10, 1fr); gap:6px}
+@media(max-width:820px){ .qGrid{grid-template-columns: repeat(5, 1fr)} }
+.qChip{padding:8px 0; text-align:center; border-radius:12px; border:1px solid var(--border); cursor:pointer; font-weight:900; background:var(--card)}
+.qChip.done{border-color:rgba(103,183,255,.55)}
+.qChip.bad{border-color:rgba(176,0,32,.5)}
+.qChip.good{border-color:rgba(11,107,42,.5)}
+.timer{font-variant-numeric: tabular-nums; font-weight:900}
+/* Print */
+@media print{
+  .topbar,.sidebar,.noPrint{display:none !important}
+  body{background:white}
+  .card{box-shadow:none}
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;700;900&display=swap" rel="stylesheet">
+</head>
+<body data-img="photos" data-theme="light">
+  <div class="topbar">
+    <div class="brand">
+      <button class="iconBtn noPrint" id="menuBtn">☰</button>
+      <div>
+        <h1>Révision Examen – 3ème Primaire</h1>
+        <div class="sub">Version v5 • Mobile • QCM • Suivi • Mode examen /20</div>
+      </div>
+    </div>
+    <div class="controls noPrint">
+      <button class="pill active" data-imgmode="photos">Photos</button>
+      <button class="pill" data-imgmode="svg">Dessins</button>
+      <button class="pill" data-imgmode="none">Images OFF</button>
+      <button class="pill" id="darkBtn">🌙</button>
+    </div>
+  </div>
+
+  <aside class="sidebar noPrint" id="sidebar">
+    <div class="sideTop">
+      <h2>📚 Menu</h2>
+      <button class="iconBtn" id="closeMenu">✕</button>
+    </div>
+    <div class="notice" style="margin-top:10px">
+      <b>Conseil</b> : fais <b>20–30 min</b> par jour → 1 thème + 1 QCM + correction.
+    </div>
+
+    <div class="navGroup" id="navMain"></div>
+
+    <hr/>
+    <div class="notice">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+        <button class="btn" id="exportBtn">Exporter le suivi (JSON)</button>
+        <label class="btn" for="importFile" style="cursor:pointer">Importer</label>
+        <input id="importFile" type="file" accept="application/json" style="display:none"/>
+      </div>
+      <div class="muted" style="margin-top:8px">Le suivi est sauvegardé automatiquement sur cet appareil (localStorage).</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="pageWrap" id="pages"></div>
+  </main>
+
+<script>
+window.APP_DATA = {"meta": {"version": "v5", "title": "Révision Examen – 3ème Primaire"}, "ui": {"fr": {"home": "Accueil", "tracking": "Suivi", "exam": "Mode examen (/20)", "start": "Commencer", "resume": "Résumé", "exercises": "Exercices", "qcm": "QCM", "tips": "Astuces", "new_qcm": "Nouveau QCM", "check": "Corriger", "show_answers": "Afficher réponses", "hide_answers": "Cacher réponses", "timer": "Chronomètre", "finish": "Terminer", "show_corr": "Afficher corrections", "score": "Note"}, "ar": {"home": "الرئيسية", "tracking": "متابعة", "exam": "وضع الامتحان (/20)", "start": "ابدأ", "resume": "ملخص", "exercises": "تمارين", "qcm": "اختيار متعدد", "tips": "نصائح", "new_qcm": "أسئلة جديدة", "check": "تصحيح", "show_answers": "إظهار الأجوبة", "hide_answers": "إخفاء الأجوبة", "timer": "المؤقت", "finish": "إنهاء", "show_corr": "إظهار التصحيح", "score": "النقطة"}}, "subjects": [{"key": "francais", "title": "🇫🇷 Français", "lang": "fr", "themes": [{"key": "fr_sujet", "title": "Le sujet", "lang": "fr", "summary": ["Le sujet, c’est la personne/animal/chose qui fait l’action.", "Pour le trouver, pose la question : « Qui est-ce qui… ? » ou « Qu’est-ce qui… ? ». ", "Le sujet peut être un nom, un groupe nominal (GN) ou un pronom."], "exercises": [{"type": "fill", "title": "Complète et trouve le sujet", "items": [{"text": "_____ mange une pomme.", "answer": "Le garçon", "hint": "Qui mange ?"}, {"text": "_____ jouent dans la cour.", "answer": "Les enfants", "hint": "Qui jouent ?"}, {"text": "_____ dort dans le panier.", "answer": "Le chat", "hint": "Qui dort ?"}, {"text": "_____ arrivent à 8h.", "answer": "Nous", "hint": "Qui arrivent ? (pronom)"}]}, {"type": "choose", "title": "Choisis le sujet", "items": [{"q": "Dans « Le lapin saute. », le sujet est…", "opts": ["saute", "le lapin", "vite"], "a": 1}, {"q": "Dans « Elle lit. », le sujet est…", "opts": ["lit", "elle", "un livre"], "a": 1}, {"q": "Dans « Les fleurs poussent. », le sujet est…", "opts": ["poussent", "les fleurs", "dans le jardin"], "a": 1}]}], "tips": ["Toujours poser la question « Qui est-ce qui… ? »", "Attention : le verbe n’est jamais le sujet !"], "images": [{"label": "Un lapin", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Oryctolagus_cuniculus_Rcdo.jpg/640px-Oryctolagus_cuniculus_Rcdo.jpg", "svg": "🐰"}], "bankKey": "fr_sujet"}, {"key": "fr_type_sujet", "title": "Type de sujet (nom / pronom / GN)", "lang": "fr", "summary": ["Nom propre : commence par une majuscule (Ali, Sara…).", "Nom commun : avec un déterminant (le, la, un, une…).", "GN = déterminant + nom (+ adjectif).", "Pronom : il, elle, nous, vous, ils, elles…"], "exercises": [{"type": "sort", "title": "Classe les sujets", "cols": ["Nom propre", "Pronom", "Groupe nominal"], "items": [{"text": "Sara", "col": 0}, {"text": "Il", "col": 1}, {"text": "Les petits chiens", "col": 2}, {"text": "Nous", "col": 1}, {"text": "Mon frère", "col": 2}, {"text": "Youssef", "col": 0}]}, {"type": "choose", "title": "Quel type de sujet ?", "items": [{"q": "Dans « Ali joue. », le sujet est…", "opts": ["un pronom", "un nom propre", "un GN"], "a": 1}, {"q": "Dans « La maîtresse parle. », le sujet est…", "opts": ["un verbe", "un GN", "un nom propre"], "a": 1}, {"q": "Dans « Ils courent. », le sujet est…", "opts": ["un pronom", "un GN", "un nom propre"], "a": 0}]}], "tips": ["Nom propre = majuscule.", "GN commence souvent par : le, la, les, un, une, mon, ma, mes…"], "images": [{"label": "Un enfant", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Kittyplya03042006.JPG/640px-Kittyplya03042006.JPG", "svg": "👦"}], "bankKey": "fr_type_sujet"}, {"key": "fr_neg", "title": "Phrase affirmative / négative", "lang": "fr", "summary": ["Affirmative : on dit que c’est vrai. (Il mange.)", "Négative : on dit « non ». (Il ne mange pas.)", "Mots de négation : ne…pas / ne…plus / ne…jamais."], "exercises": [{"type": "transform", "title": "Transforme en phrase négative", "items": [{"pos": "Je joue.", "neg": "Je ne joue pas."}, {"pos": "Nous aimons le lait.", "neg": "Nous n’aimons pas le lait."}, {"pos": "Il court.", "neg": "Il ne court pas."}]}, {"type": "transform", "title": "Transforme en phrase affirmative", "items": [{"neg": "Elle ne parle pas.", "pos": "Elle parle."}, {"neg": "Je n’ai jamais froid.", "pos": "J’ai froid."}]}], "tips": ["« ne » se place avant le verbe.", "« pas / plus / jamais » se place après le verbe."], "images": [{"label": "Une pomme", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg", "svg": "🍎"}], "bankKey": "fr_neg"}, {"key": "fr_det", "title": "Articles + possessifs", "lang": "fr", "summary": ["Articles définis : le, la, les.", "Articles indéfinis : un, une, des.", "Possessifs : mon/ma/mes, ton/ta/tes, son/sa/ses, notre/nos, votre/vos, leur/leurs."], "exercises": [{"type": "fill", "title": "Choisis l’article (le/la/les/un/une/des)", "items": [{"text": "_____ chien dort.", "answer": "Le", "hint": "chien = masculin"}, {"text": "_____ maison est grande.", "answer": "La", "hint": "maison = féminin"}, {"text": "_____ pommes sont rouges.", "answer": "Les", "hint": "pluriel"}, {"text": "_____ vélo est neuf.", "answer": "Un", "hint": "masculin (un)"}]}, {"type": "fill", "title": "Choisis le possessif (mon/ma/mes…)", "items": [{"text": "_____ cahier (à moi).", "answer": "Mon", "hint": "cahier masculin"}, {"text": "_____ trousse (à toi).", "answer": "Ta", "hint": "trousse féminin"}, {"text": "_____ chaussures (à elle).", "answer": "Ses", "hint": "pluriel"}]}], "tips": ["Au pluriel : les / des / mes / tes / ses / nos / vos / leurs.", "Astuce : écoute le mot (masculin/féminin)."], "images": [{"label": "Des objets", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg", "svg": "📚✏️"}], "bankKey": "fr_det"}, {"key": "fr_conj", "title": "Conjugaison au présent", "lang": "fr", "summary": ["1er groupe : verbes en -ER → je joue, tu joues, il joue, nous jouons…", "2e groupe : verbes en -IR (finir) → je finis, nous finissons…", "Être / Avoir / Aller : je suis, j’ai, je vais…"], "exercises": [{"type": "conj", "title": "Conjugue au présent", "items": [{"verb": "jouer", "persons": ["Je", "Tu", "Il/Elle", "Nous", "Vous", "Ils/Elles"], "answers": ["joue", "joues", "joue", "jouons", "jouez", "jouent"]}, {"verb": "finir", "persons": ["Je", "Tu", "Il/Elle", "Nous", "Vous", "Ils/Elles"], "answers": ["finis", "finis", "finit", "finissons", "finissez", "finissent"]}]}, {"type": "choose", "title": "Choisis la bonne forme", "items": [{"q": "Nous ____ au parc (aller).", "opts": ["va", "allons", "allez"], "a": 1}, {"q": "Tu ____ un stylo (avoir).", "opts": ["as", "a", "avons"], "a": 0}, {"q": "Il ____ content (être).", "opts": ["suis", "est", "sont"], "a": 1}]}], "tips": ["1er groupe : -e, -es, -e, -ons, -ez, -ent.", "2e groupe : -is, -is, -it, -issons, -issez, -issent."], "images": [{"label": "Horloge (présent)", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Analog_clock_face.svg/640px-Analog_clock_face.svg.png", "svg": "🕒"}], "bankKey": "fr_conj"}, {"key": "fr_ortho", "title": "Orthographe : an/en, in/im, on/ont", "lang": "fr", "summary": ["an/en : souvent le son [ɑ̃] (enfant, maman).", "in/im : le son [ɛ̃] (lapin, simple).", "on = pronom (On joue.) ; ont = verbe avoir (Ils ont)."], "exercises": [{"type": "choose", "title": "on ou ont ?", "items": [{"q": "Ils ____ une voiture.", "opts": ["on", "ont"], "a": 1}, {"q": "____ mange à midi.", "opts": ["On", "Ont"], "a": 0}, {"q": "Les garçons ____ faim.", "opts": ["on", "ont"], "a": 1}]}, {"type": "fill", "title": "Complète : an / en / in / im", "items": [{"text": "Un lap____ saute.", "answer": "in", "hint": "lapin"}, {"text": "Un enf____t écoute.", "answer": "an", "hint": "enfant"}, {"text": "S____ple comme bonjour.", "answer": "im", "hint": "simple"}, {"text": "M____ger une pomme.", "answer": "an", "hint": "manger"}]}], "tips": ["Teste : remplace « ont » par « avaient » → si ça marche, c’est « ont ».", "Ex : Ils avaient faim ✅"], "images": [{"label": "Un lapin", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Oryctolagus_cuniculus_Rcdo.jpg/640px-Oryctolagus_cuniculus_Rcdo.jpg", "svg": "🐰"}], "bankKey": "fr_ortho"}, {"key": "fr_vocab", "title": "Vocabulaire : familles de mots & synonymes", "lang": "fr", "summary": ["Famille de mots : mots qui viennent du même mot (chanter → chanson).", "Synonymes : mots qui veulent dire presque la même chose (grand = énorme)."], "exercises": [{"type": "match", "title": "Associe les synonymes", "pairs": [["heureux", "content"], ["vite", "rapidement"], ["beau", "joli"], ["peur", "crainte"]]}, {"type": "fill", "title": "Trouve un mot de la même famille", "items": [{"text": "chanter → une ____", "answer": "chanson", "hint": "chanson/chanteur"}, {"text": "lire → une ____", "answer": "lecture", "hint": "lecture/lecteur"}, {"text": "jouer → un ____", "answer": "joueur", "hint": "joueur/jouet"}]}], "tips": ["Un synonyme peut remplacer le mot dans la phrase.", "Famille de mots : cherche la partie qui se ressemble."], "images": [{"label": "Un livre", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Book.svg/640px-Book.svg.png", "svg": "📘"}], "bankKey": "fr_vocab"}, {"key": "fr_prod", "title": "Production écrite : fiche animal", "lang": "fr", "summary": ["Une fiche animal présente : nom, habitat, nourriture, taille, particularités.", "On écrit des phrases simples : Sujet + verbe + complément."], "exercises": [{"type": "plan", "title": "Complète la fiche", "fields": [{"label": "Animal", "placeholder": "Ex : le chat"}, {"label": "Habitat", "placeholder": "Ex : la maison"}, {"label": "Nourriture", "placeholder": "Ex : poisson"}, {"label": "Particularité", "placeholder": "Ex : il miaule"}], "model": ["Le chat vit dans la maison.", "Il mange du poisson.", "Il miaule."]}, {"type": "choose", "title": "Choisis la meilleure phrase", "items": [{"q": "Quelle phrase est bien écrite ?", "opts": ["chat mange poisson.", "Le chat mange du poisson.", "Le chat manger du poisson."], "a": 1}, {"q": "Quelle phrase a une majuscule et un point ?", "opts": ["Le lapin saute", "le lapin saute.", "Le lapin saute."], "a": 2}]}], "tips": ["Commence par une majuscule.", "Termine par un point.", "Une phrase = du sens !"], "images": [{"label": "Chat", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Kittyplya03042006.JPG/640px-Kittyplya03042006.JPG", "svg": "🐱"}], "bankKey": null}]}, {"key": "maths", "title": "➗ Maths", "lang": "fr", "themes": [{"key": "m_num", "title": "Nombres 0 → 9999", "lang": "fr", "summary": ["Lire et écrire les nombres (unités, dizaines, centaines, milliers).", "Comparer : <, >, =", "Encadrer : entre deux dizaines/centaines."], "exercises": [{"type": "fill", "title": "Écris en chiffres", "items": [{"text": "Deux mille trois cent dix", "answer": "2310", "hint": "2000 + 300 + 10"}, {"text": "Neuf mille quatre-vingt-dix", "answer": "9090", "hint": "9000 + 90"}, {"text": "Mille cinq", "answer": "1005", "hint": "1000 + 5"}]}, {"type": "choose", "title": "Choisis le bon signe", "items": [{"q": "2350 ___ 2530", "opts": [">", "<", "="], "a": 1}, {"q": "7800 ___ 7800", "opts": [">", "<", "="], "a": 2}, {"q": "9999 ___ 10000", "opts": [">", "<", "="], "a": 1}]}], "tips": ["Sépare en milliers / centaines / dizaines / unités.", "Pour comparer : regarde d’abord les milliers."], "images": [{"label": "Triangle", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Triangle_equilateral.svg/640px-Triangle_equilateral.svg.png", "svg": "🔺"}], "bankKey": "m_num"}, {"key": "m_time", "title": "Lire l’heure + durée", "lang": "fr", "summary": ["Grande aiguille : minutes. Petite aiguille : heures.", "1 heure = 60 minutes.", "Durée : différence entre deux heures."], "exercises": [{"type": "choose", "title": "Heures", "items": [{"q": "10 h 30, c’est…", "opts": ["dix heures et demie", "dix heures et quart", "neuf heures et demie"], "a": 0}, {"q": "14 h 00, c’est…", "opts": ["2 h", "14 h", "4 h"], "a": 1}]}, {"type": "fill", "title": "Durées", "items": [{"text": "De 8h10 à 8h40 : ____ minutes", "answer": "30", "hint": "40-10"}, {"text": "De 9h00 à 10h00 : ____ heure", "answer": "1", "hint": "1h"}, {"text": "De 7h30 à 8h00 : ____ minutes", "answer": "30", "hint": "00-30"}]}], "tips": ["Sur l’horloge : compte les minutes de 5 en 5.", "Pour une durée : fais la soustraction."], "images": [{"label": "Horloge", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Analog_clock_face.svg/640px-Analog_clock_face.svg.png", "svg": "🕒"}], "bankKey": "m_time"}, {"key": "m_addsub", "title": "Additions / soustractions posées", "lang": "fr", "summary": ["On aligne les unités sous les unités, dizaines sous dizaines…", "Addition : on peut « retenir ». Soustraction : on peut « emprunter ». "], "exercises": [{"type": "calc", "title": "Calcule", "items": [{"q": "348 + 127 =", "a": "475"}, {"q": "905 - 278 =", "a": "627"}, {"q": "160 + 90 =", "a": "250"}, {"q": "700 - 350 =", "a": "350"}]}, {"type": "choose", "title": "Vrai ou faux ?", "items": [{"q": "800 - 90 = 710", "opts": ["Vrai", "Faux"], "a": 0}, {"q": "450 + 60 = 500", "opts": ["Vrai", "Faux"], "a": 1}]}], "tips": ["Toujours aligner les chiffres.", "Vérifie avec l’opération inverse."], "images": [{"label": "Objets", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg", "svg": "➕➖"}], "bankKey": "m_addsub"}, {"key": "m_mul", "title": "Multiplication (tables + posé)", "lang": "fr", "summary": ["Réviser les tables (2 à 9).", "Multiplier par 10 : on ajoute un zéro (×10).", "Multiplier par 100 : on ajoute deux zéros (×100)."], "exercises": [{"type": "calc", "title": "Tables", "items": [{"q": "6 × 7 =", "a": "42"}, {"q": "8 × 5 =", "a": "40"}, {"q": "9 × 3 =", "a": "27"}, {"q": "7 × 4 =", "a": "28"}]}, {"type": "fill", "title": "×10 / ×100", "items": [{"text": "35 × 10 =", "answer": "350", "hint": "ajoute 0"}, {"text": "72 × 100 =", "answer": "7200", "hint": "ajoute 00"}, {"text": "9 × 10 =", "answer": "90", "hint": "ajoute 0"}]}], "tips": ["Apprends 2 tables par jour.", "Fais des cartes : question devant / réponse derrière."], "images": [{"label": "Triangle", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Triangle_equilateral.svg/640px-Triangle_equilateral.svg.png", "svg": "✖️"}], "bankKey": "m_mul"}, {"key": "m_angles", "title": "Angles & triangles", "lang": "fr", "summary": ["Angle droit = 90° (comme un coin de cahier).", "Triangle : 3 côtés, 3 angles.", "Triangles : équilatéral (3 côtés égaux), isocèle (2 côtés égaux)."], "exercises": [{"type": "choose", "title": "Choisis", "items": [{"q": "Un angle droit mesure…", "opts": ["45°", "90°", "180°"], "a": 1}, {"q": "Un triangle a…", "opts": ["2 côtés", "3 côtés", "4 côtés"], "a": 1}, {"q": "Triangle équilatéral :", "opts": ["2 côtés égaux", "3 côtés égaux", "aucun côté égal"], "a": 1}]}, {"type": "fill", "title": "Complète", "items": [{"text": "Un angle plat mesure ____ degrés.", "answer": "180", "hint": "plat"}, {"text": "Un triangle isocèle a ____ côtés égaux.", "answer": "2", "hint": "iso=2"}]}], "tips": ["Cherche les angles droits avec une équerre.", "Dessine doucement et compte les côtés."], "images": [{"label": "Triangle", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Triangle_equilateral.svg/640px-Triangle_equilateral.svg.png", "svg": "🔺"}], "bankKey": "m_angles"}, {"key": "m_peri", "title": "Périmètre / aire (rectangle)", "lang": "fr", "summary": ["Périmètre = tout le tour. Rectangle : P = 2 × (L + l).", "Aire = surface. Rectangle : A = L × l."], "exercises": [{"type": "calc", "title": "Calcule", "items": [{"q": "Rectangle L=8 cm, l=3 cm → P =", "a": "22", "hint": "2*(8+3)=22"}, {"q": "Rectangle L=8 cm, l=3 cm → A =", "a": "24", "hint": "8*3=24"}, {"q": "Carré côté 5 cm → P =", "a": "20", "hint": "4*5=20"}]}, {"type": "choose", "title": "Choisis la bonne formule", "items": [{"q": "Aire du rectangle", "opts": ["L×l", "2×(L+l)", "L+l"], "a": 0}, {"q": "Périmètre du rectangle", "opts": ["L×l", "2×(L+l)", "L-l"], "a": 1}]}], "tips": ["Unités : cm pour périmètre, cm² pour aire.", "Écris toujours l’unité."], "images": [{"label": "Objet", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg", "svg": "📏"}], "bankKey": "m_peri"}]}, {"key": "sciences", "title": "🔬 Sciences", "lang": "fr", "themes": [{"key": "sci_etats", "title": "États de la matière (solide / liquide / gaz)", "lang": "fr", "summary": ["Solide : forme propre (pierre).", "Liquide : prend la forme du récipient (eau).", "Gaz : invisible, prend tout l’espace (air)."], "exercises": [{"type": "choose", "title": "Choisis l’état", "items": [{"q": "L’eau dans un verre est…", "opts": ["solide", "liquide", "gaz"], "a": 1}, {"q": "La vapeur d’eau est…", "opts": ["solide", "liquide", "gaz"], "a": 2}, {"q": "Une pierre est…", "opts": ["solide", "liquide", "gaz"], "a": 0}]}, {"type": "sort", "title": "Classe (solide / liquide / gaz)", "cols": ["Solide", "Liquide", "Gaz"], "items": [{"text": "huile", "col": 1}, {"text": "air", "col": 2}, {"text": "bois", "col": 0}, {"text": "lait", "col": 1}, {"text": "fumée", "col": 2}]}], "tips": ["Regarde : est-ce que ça coule ? (liquide)", "Est-ce qu’on peut le tenir ? (solide)"], "images": [{"label": "Goutte d’eau", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Water_drop_001.jpg/640px-Water_drop_001.jpg", "svg": "💧"}], "bankKey": "sci_gaz"}, {"key": "sci_air", "title": "L’air", "lang": "fr", "summary": ["L’air est un gaz : il occupe de la place.", "Le vent = l’air qui bouge.", "On respire grâce à l’air."], "exercises": [{"type": "choose", "title": "Vrai / faux", "items": [{"q": "L’air est invisible.", "opts": ["Vrai", "Faux"], "a": 0}, {"q": "Le vent est de l’air immobile.", "opts": ["Vrai", "Faux"], "a": 1}, {"q": "On respire avec les poumons.", "opts": ["Vrai", "Faux"], "a": 0}]}, {"type": "fill", "title": "Complète", "items": [{"text": "Le vent est l’air qui ____.", "answer": "bouge", "hint": "bouge"}, {"text": "L’air est un ____.", "answer": "gaz", "hint": "gaz"}]}], "tips": ["Fais l’expérience : gonfle un ballon → l’air prend de la place.", "Respirer : inspire / expire."], "images": [{"label": "Vent", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Wind_turbine.JPG/640px-Wind_turbine.JPG", "svg": "💨"}], "bankKey": "sci_air"}, {"key": "sci_poll", "title": "Pollution & gestes", "lang": "fr", "summary": ["La pollution salit l’air, l’eau et la terre.", "On peut réduire : trier, économiser l’eau, ne pas jeter par terre."], "exercises": [{"type": "choose", "title": "Bon geste ?", "items": [{"q": "Je jette un papier par terre.", "opts": ["Bon", "Pas bon"], "a": 1}, {"q": "Je ferme le robinet pendant que je savonne.", "opts": ["Bon", "Pas bon"], "a": 0}, {"q": "Je trie plastique / papier.", "opts": ["Bon", "Pas bon"], "a": 0}]}, {"type": "plan", "title": "Mes 3 gestes de la semaine", "fields": [{"label": "Geste 1", "placeholder": "Ex : je trie"}, {"label": "Geste 2", "placeholder": "Ex : j’éteins la lumière"}, {"label": "Geste 3", "placeholder": "Ex : je ne jette rien par terre"}], "model": ["1) Trier les déchets.", "2) Économiser l’eau.", "3) Garder la cour propre."]}], "tips": ["Commence par 1 geste facile et garde-le toute la semaine.", "Explique à la famille : ça aide !"], "images": [{"label": "Pollution", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Smog_in_Beijing.jpg/640px-Smog_in_Beijing.jpg", "svg": "🧼♻️"}], "bankKey": "sci_poll"}]}, {"key": "arabe", "title": "🇲🇦 اللغة العربية", "lang": "ar", "themes": [{"key": "ar_sarf", "title": "الصرف: الفعل الماضي والمضارع والأمر", "lang": "ar", "summary": ["الفعل الماضي: حدث في الماضي (لَعِبَ).", "الفعل المضارع: يحدث الآن أو في المستقبل (يَلْعَبُ).", "فعل الأمر: طلب القيام بالفعل (اِلْعَبْ)."], "exercises": [{"type": "choose", "title": "اختر النوع", "items": [{"q": "(كتبَ) فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 0}, {"q": "(يكتبُ) فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 1}, {"q": "(اكتبْ) فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 2}]}, {"type": "transform", "title": "حوّل", "items": [{"pos": "كتبَ الولدُ الدرسَ.", "neg": "يكتبُ الولدُ الدرسَ."}, {"pos": "لعبَ الطفلُ.", "neg": "اِلعبْ يا طفلُ."}], "labels": {"from": "الجملة", "to": "تحويل"}}], "tips": ["انظر إلى الحركات: (يـ) غالباً للمضارع.", "الأمر يبدأ أحياناً بألف وصل (اكتبْ)."], "images": [{"label": "قلم", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Pencil_tip.jpg/640px-Pencil_tip.jpg", "svg": "✏️"}], "bankKey": "ar_sarf"}, {"key": "ar_tarakib", "title": "التراكيب: الجملة الاسمية والفعلية", "lang": "ar", "summary": ["الجملة الاسمية: تبدأ باسم (الولدُ مجتهدٌ).", "الجملة الفعلية: تبدأ بفعل (كتبَ الولدُ).", "المبتدأ والخبر في الجملة الاسمية."], "exercises": [{"type": "choose", "title": "اسمـيّة أم فعليّة؟", "items": [{"q": "(الجوُّ جميلٌ).", "opts": ["اسمية", "فعلية"], "a": 0}, {"q": "(يلعبُ الطفلُ).", "opts": ["اسمية", "فعلية"], "a": 1}, {"q": "(القطُّ نائمٌ).", "opts": ["اسمية", "فعلية"], "a": 0}]}, {"type": "fill", "title": "أكمل المبتدأ والخبر", "items": [{"text": "الكتابُ _____.", "answer": "مفيدٌ", "hint": "خبر"}, {"text": "المدرسةُ _____.", "answer": "نظيفةٌ", "hint": "خبر"}]}], "tips": ["اسأل: هل بدأت الجملة بفعل؟ إذن هي فعلية.", "اسمية: مبتدأ + خبر."], "images": [{"label": "كتاب", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Book.svg/640px-Book.svg.png", "svg": "📘"}], "bankKey": "ar_tarakib"}, {"key": "ar_imla", "title": "الإملاء: التنوين والمدود", "lang": "ar", "summary": ["التنوين: (ـٌ / ـٍ / ـً) مثل: كتابٌ، كتابٍ، كتابًا.", "المد: الألف (ا)، الواو (و)، الياء (ي) مثل: باب، نور، كبير."], "exercises": [{"type": "choose", "title": "اختر التنوين الصحيح", "items": [{"q": "هذا كتاب__", "opts": ["ٌ", "ٍ", "ً"], "a": 0}, {"q": "رأيتُ ولد__", "opts": ["ٌ", "ٍ", "ً"], "a": 2}, {"q": "مررتُ ببيت__", "opts": ["ٌ", "ٍ", "ً"], "a": 1}]}, {"type": "fill", "title": "ضع حرف المد المناسب", "items": [{"text": "ن__ر", "answer": "و", "hint": "نور"}, {"text": "ب__ب", "answer": "ا", "hint": "باب"}, {"text": "كب__ر", "answer": "ي", "hint": "كبير"}]}], "tips": ["فتحتان (ً) غالباً في آخر الكلمة مع (ا) مثل: ولدًا.", "المدود تساعد على طول الصوت."], "images": [{"label": "نور", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Light_bulb_idea_icon.svg/640px-Light_bulb_idea_icon.svg.png", "svg": "💡"}], "bankKey": "ar_imla"}]}, {"key": "islamique", "title": "🕌 التربية الإسلامية", "lang": "ar", "themes": [{"key": "is_wudu", "title": "الوضوء والصلاة", "lang": "ar", "summary": ["الوضوء: نية، غسل الوجه، غسل اليدين، مسح الرأس، غسل الرجلين.", "من سنن الوضوء: التسمية، السواك.", "الصلاة: تكبير، قراءة الفاتحة، ركوع، سجود."], "exercises": [{"type": "order", "title": "رتّب خطوات الوضوء", "items": ["غسل الرجلين", "مسح الرأس", "غسل الوجه", "غسل اليدين", "النية"], "answer": ["النية", "غسل الوجه", "غسل اليدين", "مسح الرأس", "غسل الرجلين"]}, {"type": "choose", "title": "صح أم خطأ", "items": [{"q": "الوضوء شرط للصلاة.", "opts": ["صح", "خطأ"], "a": 0}, {"q": "نغسل الرجلين قبل الوجه.", "opts": ["صح", "خطأ"], "a": 1}]}], "tips": ["لا تنسَ النية.", "تعلّم الخطوات بالترتيب."], "images": [{"label": "ماء", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Water_drop_001.jpg/640px-Water_drop_001.jpg", "svg": "💧"}], "bankKey": "is_wudu"}, {"key": "is_recit", "title": "التلاوة والحفظ: سورة الانفطار", "lang": "ar", "summary": ["اقرأ ببطء مع التجويد.", "قسّم السورة إلى مقاطع قصيرة.", "كرّر كل آية 3 مرات."], "exercises": [{"type": "recite", "title": "آيات بالتدرّج (اضغط لإظهار آية جديدة)", "surah": {"name": "سورة الانفطار (82)", "audio_hi": "https://dl2.sura.pw/dl/reciter/25/128/082.mp3?dl=true", "audio_norm": "https://dl2.sura.pw/dl/reciter/25/64/082.mp3?dl=true", "source": "suratmp3"}, "ayat": ["بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", "إِذَا السَّمَاءُ انفَطَرَتْ", "وَإِذَا الْكَوَاكِبُ انتَثَرَتْ", "وَإِذَا الْبِحَارُ فُجِّرَتْ", "وَإِذَا الْقُبُورُ بُعْثِرَتْ", "عَلِمَتْ نَفْسٌ مَّا قَدَّمَتْ وَأَخَّرَتْ", "يَا أَيُّهَا الْإِنسَانُ مَا غَرَّكَ بِرَبِّكَ الْكَرِيمِ", "الَّذِي خَلَقَكَ فَسَوَّاكَ فَعَدَلَكَ", "فِي أَيِّ صُورَةٍ مَّا شَاءَ رَكَّبَكَ", "كَلَّا بَلْ تُكَذِّبُونَ بِالدِّينِ", "وَإِنَّ عَلَيْكُمْ لَحَافِظِينَ", "كِرَامًا كَاتِبِينَ", "يَعْلَمُونَ مَا تَفْعَلُونَ", "إِنَّ الْأَبْرَارَ لَفِي نَعِيمٍ", "وَإِنَّ الْفُجَّارَ لَفِي جَحِيمٍ", "يَصْلَوْنَهَا يَوْمَ الدِّينِ", "وَمَا هُمْ عَنْهَا بِغَائِبِينَ", "وَمَا أَدْرَاكَ مَا يَوْمُ الدِّينِ", "ثُمَّ مَا أَدْرَاكَ مَا يَوْمُ الدِّينِ", "يَوْمَ لَا تَمْلِكُ نَفْسٌ لِنَفْسٍ شَيْئًا ۖ وَالْأَمْرُ يَوْمَئِذٍ لِلَّهِ"]}], "tips": ["استمع ثم كرّر.", "سجّل صوتك لتصحّح الأخطاء."], "images": [{"label": "مصحف", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Quran_02.jpg/640px-Quran_02.jpg", "svg": "📖"}], "bankKey": null}]}, {"key": "activite", "title": "🧪 النشاط العلمي", "lang": "ar", "themes": [{"key": "a_mat", "title": "المادة وأشكالها", "lang": "ar", "summary": ["المادة: كل ما له كتلة ويشغل حيزاً.", "الأجسام: صلبة/سائلة/غازية."], "exercises": [{"type": "choose", "title": "اختر", "items": [{"q": "الخشب مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 0}, {"q": "الحليب مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 1}, {"q": "الهواء مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 2}]}], "tips": ["اسأل: هل يمكن لمسه؟ هل يسيل؟ هل يملأ المكان؟"], "images": [{"label": "ماء", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Water_drop_001.jpg/640px-Water_drop_001.jpg", "svg": "💧"}], "bankKey": "a_mat"}, {"key": "a_mix", "title": "الخلائط والفصل", "lang": "ar", "summary": ["خليط: مزج مادتين أو أكثر.", "فصل الخليط: بالترشيح/الغربلة/المغناطيس…"], "exercises": [{"type": "choose", "title": "طريقة الفصل", "items": [{"q": "فصل الرمل عن الماء", "opts": ["الترشيح", "المغناطيس", "التسخين"], "a": 0}, {"q": "فصل الحديد عن الرمل", "opts": ["الترشيح", "المغناطيس", "العصر"], "a": 1}]}, {"type": "plan", "title": "تجربة بسيطة", "fields": [{"label": "المواد", "placeholder": "ماء + رمل + ورق ترشيح"}, {"label": "الخطوات", "placeholder": "أكتب الخطوات"}, {"label": "النتيجة", "placeholder": "ماذا حصل؟"}], "model": ["نضع الماء والرمل في كأس.", "نصب الخليط في ورق الترشيح.", "يبقى الرمل ويعبر الماء."]}], "tips": ["جرّب في البيت مع مساعدة وليّ الأمر."], "images": [{"label": "مغناطيس", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Horseshoe_magnet.jpg/640px-Horseshoe_magnet.jpg", "svg": "🧲"}], "bankKey": "a_mix"}, {"key": "a_mag", "title": "المغناطيس", "lang": "ar", "summary": ["المغناطيس يجذب الحديد وبعض المعادن.", "لا يجذب الخشب أو البلاستيك."], "exercises": [{"type": "sort", "title": "صنّف (يجذب/لا يجذب)", "cols": ["يجذب", "لا يجذب"], "items": [{"text": "مسمار", "col": 0}, {"text": "قطعة خشب", "col": 1}, {"text": "مشبك ورق", "col": 0}, {"text": "بلاستيك", "col": 1}]}], "tips": ["اختبر أشياء مختلفة وتأكد من المعدن."], "images": [{"label": "مغناطيس", "photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Horseshoe_magnet.jpg/640px-Horseshoe_magnet.jpg", "svg": "🧲"}], "bankKey": "a_mag"}]}], "bank": {"fr_sujet": [{"q": "Dans « Le lapin saute. », le sujet est…", "opts": ["saute", "le lapin", "vite"], "a": 1, "exp": "Qui saute ? → le lapin."}, {"q": "Dans « Nous écrivons. », le sujet est…", "opts": ["nous", "écrivons", "un livre"], "a": 0, "exp": "Qui écrit ? → nous."}, {"q": "Dans « Les filles chantent. », le sujet est…", "opts": ["chantent", "les filles", "une chanson"], "a": 1, "exp": "Qui chante ? → les filles."}, {"q": "Dans « Papa cuisine. », le sujet est…", "opts": ["Papa", "cuisine", "la soupe"], "a": 0, "exp": "Qui cuisine ? → Papa."}, {"q": "Dans « Elle court. », le sujet est…", "opts": ["court", "Elle", "vite"], "a": 1, "exp": "Qui court ? → Elle."}, {"q": "Dans « Le chien aboie. », le sujet est…", "opts": ["aboie", "le chien", "fort"], "a": 1, "exp": "Qui aboie ? → le chien."}, {"q": "Dans « La pluie tombe. », le sujet est…", "opts": ["tombe", "la pluie", "dehors"], "a": 1, "exp": "Qu’est-ce qui tombe ? → la pluie."}, {"q": "Dans « Mes amis arrivent. », le sujet est…", "opts": ["mes amis", "arrivent", "vite"], "a": 0, "exp": "Qui arrive ? → mes amis."}, {"q": "Dans « Tu dessines. », le sujet est…", "opts": ["tu", "dessines", "un dessin"], "a": 0, "exp": "Qui dessine ? → tu."}, {"q": "Dans « Le soleil brille. », le sujet est…", "opts": ["brille", "le soleil", "jaune"], "a": 1, "exp": "Qu’est-ce qui brille ? → le soleil."}, {"q": "Dans « Les oiseaux volent. », le sujet est…", "opts": ["volent", "les oiseaux", "dans le ciel"], "a": 1, "exp": "Qui vole ? → les oiseaux."}, {"q": "Dans « On joue. », le sujet est…", "opts": ["on", "joue", "au ballon"], "a": 0, "exp": "Le sujet peut être « on »."}], "fr_type_sujet": [{"q": "Dans « Ali joue. », le sujet est…", "opts": ["un pronom", "un nom propre", "un GN"], "a": 1, "exp": "Ali = nom propre."}, {"q": "Dans « La maîtresse parle. », le sujet est…", "opts": ["un verbe", "un GN", "un nom propre"], "a": 1, "exp": "La maîtresse = déterminant + nom."}, {"q": "Dans « Il lit. », le sujet est…", "opts": ["un pronom", "un nom propre", "un GN"], "a": 0, "exp": "Il = pronom."}, {"q": "Dans « Mes cousins rient. », le sujet est…", "opts": ["un GN", "un pronom", "un nom propre"], "a": 0, "exp": "Mes cousins = GN."}, {"q": "Dans « Sara danse. », le sujet est…", "opts": ["un GN", "un nom propre", "un pronom"], "a": 1, "exp": "Sara = nom propre."}, {"q": "Dans « Nous chantons. », le sujet est…", "opts": ["un nom propre", "un pronom", "un GN"], "a": 1, "exp": "Nous = pronom."}, {"q": "Dans « Le petit chat dort. », le sujet est…", "opts": ["un GN", "un pronom", "un nom propre"], "a": 0, "exp": "Le petit chat = GN."}, {"q": "Dans « Youssef court. », le sujet est…", "opts": ["un nom propre", "un pronom", "un GN"], "a": 0, "exp": "Youssef = nom propre."}, {"q": "Dans « Elles jouent. », le sujet est…", "opts": ["un GN", "un pronom", "un nom propre"], "a": 1, "exp": "Elles = pronom."}, {"q": "Dans « Mon frère regarde. », le sujet est…", "opts": ["un pronom", "un nom propre", "un GN"], "a": 2, "exp": "Mon frère = GN."}, {"q": "Dans « Le ballon roule. », le sujet est…", "opts": ["un verbe", "un GN", "un pronom"], "a": 1, "exp": "Le ballon = GN."}, {"q": "Dans « Karim arrive. », le sujet est…", "opts": ["un nom propre", "un GN", "un pronom"], "a": 0, "exp": "Karim = nom propre."}], "fr_neg": [{"q": "La phrase négative contient…", "opts": ["ne…pas", "toujours un point d’exclamation", "deux verbes"], "a": 0, "exp": "Négation : ne…pas."}, {"q": "Transforme : « Je joue. »", "opts": ["Je ne joue pas.", "Je pas joue.", "Je ne joue."], "a": 0, "exp": "ne avant verbe, pas après."}, {"q": "Transforme : « Il mange. »", "opts": ["Il ne mange pas.", "Il mange ne pas.", "Il ne pas mange."], "a": 0, "exp": "Il ne mange pas."}, {"q": "« Nous n’aimons pas. » est…", "opts": ["affirmative", "négative", "interrogative"], "a": 1, "exp": "Présence de n’…pas."}, {"q": "Dans « Je ne viens jamais. », le mot de négation est…", "opts": ["toujours", "jamais", "plus"], "a": 1, "exp": "Négation : jamais."}, {"q": "Transforme : « Elle parle. »", "opts": ["Elle ne parle pas.", "Elle n’ parle pas.", "Elle ne pas parle."], "a": 0, "exp": "Elle ne parle pas."}, {"q": "Dans « Il ne court plus. », on utilise…", "opts": ["ne…pas", "ne…plus", "ne…jamais"], "a": 1, "exp": "plus = négation."}, {"q": "« Je ne suis pas content. » est…", "opts": ["affirmative", "négative", "exclamative"], "a": 1, "exp": "ne…pas"}, {"q": "Où se place « ne » ?", "opts": ["avant le verbe", "après le verbe", "à la fin"], "a": 0, "exp": "ne avant verbe."}, {"q": "Où se place « pas » ?", "opts": ["avant le verbe", "après le verbe", "au début"], "a": 1, "exp": "pas après verbe."}, {"q": "Transforme : « Nous avons faim. »", "opts": ["Nous n’avons pas faim.", "Nous ne avons pas faim.", "Nous n’ avons faim."], "a": 0, "exp": "n’ avant voyelle."}, {"q": "Transforme : « Tu es prêt. »", "opts": ["Tu n’es pas prêt.", "Tu ne es pas prêt.", "Tu n’ pas es prêt."], "a": 0, "exp": "Tu n’es pas prêt."}], "fr_det": [{"q": "« le, la, les » sont des articles…", "opts": ["définis", "indéfinis", "possessifs"], "a": 0, "exp": "Articles définis."}, {"q": "« un, une, des » sont des articles…", "opts": ["définis", "indéfinis", "démonstratifs"], "a": 1, "exp": "Indéfinis."}, {"q": "Choisis : ___ maison", "opts": ["le", "la", "les"], "a": 1, "exp": "maison féminin."}, {"q": "Choisis : ___ chien", "opts": ["le", "la", "les"], "a": 0, "exp": "chien masculin."}, {"q": "Choisis : ___ pommes", "opts": ["un", "une", "des"], "a": 2, "exp": "pluriel = des."}, {"q": "Possessif (à moi) : ___ cahier", "opts": ["ma", "mon", "mes"], "a": 1, "exp": "cahier masculin."}, {"q": "Possessif (à toi) : ___ trousse", "opts": ["ton", "ta", "tes"], "a": 1, "exp": "trousse féminin."}, {"q": "Possessif (à lui/elle) pluriel : ___ livres", "opts": ["son", "sa", "ses"], "a": 2, "exp": "pluriel = ses."}, {"q": "Possessif (à nous) : ___ école", "opts": ["notre", "nos", "votre"], "a": 0, "exp": "singulier = notre."}, {"q": "Possessif (à vous) pluriel : ___ cahiers", "opts": ["votre", "vos", "leurs"], "a": 1, "exp": "pluriel = vos."}, {"q": "Possessif (à eux) singulier : ___ ballon", "opts": ["leur", "leurs", "nos"], "a": 0, "exp": "singulier = leur."}, {"q": "Possessif (à eux) pluriel : ___ ballons", "opts": ["leur", "leurs", "vos"], "a": 1, "exp": "pluriel = leurs."}], "fr_conj": [{"q": "Au présent, « nous » avec jouer : ", "opts": ["joue", "jouons", "jouez"], "a": 1, "exp": "nous jouons."}, {"q": "Au présent, « ils » avec finir :", "opts": ["finis", "finissent", "finissez"], "a": 1, "exp": "ils finissent."}, {"q": "Je ____ (être)", "opts": ["suis", "es", "est"], "a": 0, "exp": "je suis."}, {"q": "Tu ____ (avoir)", "opts": ["a", "as", "avons"], "a": 1, "exp": "tu as."}, {"q": "Nous ____ (aller)", "opts": ["allez", "allons", "va"], "a": 1, "exp": "nous allons."}, {"q": "Vous ____ (jouer)", "opts": ["jouez", "jouons", "jouent"], "a": 0, "exp": "vous jouez."}, {"q": "Ils ____ (manger)", "opts": ["mange", "mangent", "mangeons"], "a": 1, "exp": "ils mangent."}, {"q": "Je ____ (finir)", "opts": ["finis", "finit", "finissons"], "a": 0, "exp": "je finis."}, {"q": "Elle ____ (aller)", "opts": ["vas", "va", "vont"], "a": 1, "exp": "elle va."}, {"q": "On ____ (avoir)", "opts": ["a", "as", "avons"], "a": 0, "exp": "on a."}, {"q": "Nous ____ (être)", "opts": ["sont", "sommes", "êtes"], "a": 1, "exp": "nous sommes."}, {"q": "Tu ____ (jouer)", "opts": ["joues", "joue", "jouons"], "a": 0, "exp": "tu joues."}], "fr_ortho": [{"q": "« On » est…", "opts": ["un pronom", "un verbe avoir", "un adjectif"], "a": 0, "exp": "On = pronom."}, {"q": "« ont » est…", "opts": ["un pronom", "le verbe avoir", "un déterminant"], "a": 1, "exp": "ont = avoir."}, {"q": "Choisis : Ils ____ faim.", "opts": ["on", "ont"], "a": 1, "exp": "Ils avaient faim → ont."}, {"q": "Choisis : ____ joue au ballon.", "opts": ["On", "Ont"], "a": 0, "exp": "On = pronom."}, {"q": "Choisis : Les enfants ____ des bonbons.", "opts": ["on", "ont"], "a": 1, "exp": "ont = avoir."}, {"q": "Complète : un lap____", "opts": ["an", "in", "on"], "a": 1, "exp": "lapin"}, {"q": "Complète : un enf____t", "opts": ["an", "in", "en"], "a": 0, "exp": "enfant"}, {"q": "Complète : s____ple", "opts": ["im", "in", "an"], "a": 0, "exp": "simple"}, {"q": "Complète : m____ger", "opts": ["an", "en", "in"], "a": 0, "exp": "manger"}, {"q": "Test pour « ont » :", "opts": ["remplacer par avaient", "remplacer par est", "remplacer par le"], "a": 0, "exp": "avaient marche."}, {"q": "Le son [ɑ̃] s’écrit souvent…", "opts": ["an/en", "in/im", "on/om"], "a": 0, "exp": "an/en"}, {"q": "Le son [ɛ̃] s’écrit souvent…", "opts": ["an/en", "in/im", "ou/oi"], "a": 1, "exp": "in/im"}], "fr_vocab": [{"q": "Synonyme de « grand » :", "opts": ["petit", "énorme", "lourd"], "a": 1, "exp": "grand ≈ énorme."}, {"q": "Synonyme de « vite » :", "opts": ["rapidement", "lentement", "calme"], "a": 0, "exp": "vite ≈ rapidement."}, {"q": "Synonyme de « beau » :", "opts": ["joli", "sale", "cassé"], "a": 0, "exp": "beau ≈ joli."}, {"q": "Synonyme de « content » :", "opts": ["heureux", "triste", "fâché"], "a": 0, "exp": "content ≈ heureux."}, {"q": "Famille de « chanter » :", "opts": ["chanson", "changer", "chaise"], "a": 0, "exp": "chanter → chanson."}, {"q": "Famille de « lire » :", "opts": ["lecture", "lune", "lapin"], "a": 0, "exp": "lire → lecture."}, {"q": "Famille de « jouer » :", "opts": ["joueur", "jour", "joli"], "a": 0, "exp": "jouer → joueur."}, {"q": "Synonyme de « peur » :", "opts": ["crainte", "joie", "faim"], "a": 0, "exp": "peur ≈ crainte."}, {"q": "Synonyme de « regarder » :", "opts": ["voir", "manger", "courir"], "a": 0, "exp": "regarder ≈ voir."}, {"q": "Famille de « dent » :", "opts": ["dentiste", "danse", "don"], "a": 0, "exp": "dent → dentiste."}, {"q": "Synonyme de « parler » :", "opts": ["dire", "dormir", "lire"], "a": 0, "exp": "parler ≈ dire."}, {"q": "Famille de « fleur » :", "opts": ["fleuriste", "flotte", "flou"], "a": 0, "exp": "fleur → fleuriste."}], "m_num": [{"q": "Dans 4 356, le chiffre des centaines est…", "opts": ["4", "3", "5"], "a": 1, "exp": "4 milliers, 3 centaines."}, {"q": "Le nombre 2 040 s’écrit…", "opts": ["deux mille quarante", "deux cent quarante", "deux mille quatre"], "a": 0, "exp": ""}, {"q": "3 999 ___ 4 000", "opts": [">", "<", "="], "a": 1, "exp": "3999 est plus petit."}, {"q": "1 500 = 1 millier + …", "opts": ["5 centaines", "50 centaines", "15 centaines"], "a": 0, "exp": "1 500 = 1 000 + 500."}, {"q": "Le plus grand :", "opts": ["7 090", "7 900", "7 009"], "a": 1, "exp": "7 900"}, {"q": "Encadrer 2 368 entre deux centaines :", "opts": ["2 300 et 2 400", "2 200 et 2 300", "2 400 et 2 500"], "a": 0, "exp": ""}, {"q": "Dans 8 105, le chiffre des unités est…", "opts": ["8", "1", "5"], "a": 2, "exp": ""}, {"q": "9 010 = …", "opts": ["9 milliers + 1 dizaine", "9 centaines + 1 dizaine", "9 milliers + 1 unité"], "a": 0, "exp": ""}, {"q": "Le nombre « mille cinq » =", "opts": ["1050", "1005", "1500"], "a": 1, "exp": ""}, {"q": "2 700 = …", "opts": ["27 centaines", "2 centaines + 7 dizaines", "2 milliers + 7 unités"], "a": 0, "exp": "27×100"}, {"q": "5 432 - 5 000 =", "opts": ["432", "532", "342"], "a": 0, "exp": ""}, {"q": "0 ___ 10", "opts": [">", "<", "="], "a": 1, "exp": "0 < 10"}], "m_time": [{"q": "1 heure = … minutes", "opts": ["30", "60", "100"], "a": 1, "exp": ""}, {"q": "10 h 15, c’est…", "opts": ["dix heures et quart", "dix heures et demie", "neuf heures et quart"], "a": 0, "exp": ""}, {"q": "14 h 00, c’est…", "opts": ["2 h", "14 h", "4 h"], "a": 1, "exp": ""}, {"q": "De 8 h 10 à 8 h 40 :", "opts": ["20 min", "30 min", "50 min"], "a": 1, "exp": ""}, {"q": "De 9 h 30 à 10 h 00 :", "opts": ["20 min", "30 min", "40 min"], "a": 1, "exp": ""}, {"q": "7 h 00 + 30 min =", "opts": ["7 h 30", "7 h 03", "8 h 30"], "a": 0, "exp": ""}, {"q": "12 h 45, c’est…", "opts": ["midi moins le quart", "midi et quart", "une heure moins le quart"], "a": 2, "exp": "12h45 = 1h moins le quart (après-midi)."}, {"q": "De 15 h 00 à 16 h 00 :", "opts": ["30 min", "1 h", "2 h"], "a": 1, "exp": ""}, {"q": "Quelle aiguille montre les minutes ?", "opts": ["petite", "grande", "les deux"], "a": 1, "exp": ""}, {"q": "20 minutes = …", "opts": ["1/2 heure", "1/3 heure", "1/4 heure"], "a": 1, "exp": "20/60 = 1/3"}, {"q": "10 h 00 + 1 h 15 =", "opts": ["11 h 15", "11 h 05", "12 h 15"], "a": 0, "exp": ""}, {"q": "Durée : 18 h 10 → 18 h 50", "opts": ["30 min", "40 min", "50 min"], "a": 1, "exp": ""}], "m_addsub": [{"q": "348 + 127 =", "opts": ["465", "475", "485"], "a": 1, "exp": ""}, {"q": "905 - 278 =", "opts": ["627", "617", "637"], "a": 0, "exp": ""}, {"q": "160 + 90 =", "opts": ["250", "260", "240"], "a": 0, "exp": ""}, {"q": "700 - 350 =", "opts": ["350", "450", "250"], "a": 0, "exp": ""}, {"q": "500 + 500 =", "opts": ["1000", "900", "1100"], "a": 0, "exp": ""}, {"q": "800 - 90 =", "opts": ["710", "720", "700"], "a": 0, "exp": ""}, {"q": "450 + 60 =", "opts": ["500", "510", "520"], "a": 1, "exp": "450+60=510"}, {"q": "1000 - 1 =", "opts": ["999", "1001", "990"], "a": 0, "exp": ""}, {"q": "200 + 30 + 4 =", "opts": ["234", "243", "324"], "a": 0, "exp": ""}, {"q": "900 - 400 =", "opts": ["500", "600", "400"], "a": 0, "exp": ""}, {"q": "375 + 25 =", "opts": ["400", "390", "410"], "a": 0, "exp": ""}, {"q": "600 - 125 =", "opts": ["475", "485", "495"], "a": 0, "exp": "600-100=500; -25=475"}], "m_mul": [{"q": "6 × 7 =", "opts": ["36", "42", "48"], "a": 1, "exp": ""}, {"q": "8 × 5 =", "opts": ["40", "35", "45"], "a": 0, "exp": ""}, {"q": "9 × 3 =", "opts": ["18", "27", "36"], "a": 1, "exp": ""}, {"q": "7 × 4 =", "opts": ["21", "24", "28"], "a": 2, "exp": ""}, {"q": "5 × 6 =", "opts": ["11", "30", "60"], "a": 1, "exp": ""}, {"q": "3 × 9 =", "opts": ["27", "29", "21"], "a": 0, "exp": ""}, {"q": "4 × 8 =", "opts": ["32", "28", "36"], "a": 0, "exp": ""}, {"q": "2 × 7 =", "opts": ["12", "14", "16"], "a": 1, "exp": ""}, {"q": "9 × 9 =", "opts": ["81", "72", "99"], "a": 0, "exp": ""}, {"q": "35 × 10 =", "opts": ["350", "35", "305"], "a": 0, "exp": ""}, {"q": "72 × 100 =", "opts": ["720", "7200", "7020"], "a": 1, "exp": ""}, {"q": "9 × 10 =", "opts": ["19", "90", "900"], "a": 1, "exp": ""}], "m_angles": [{"q": "Un angle droit mesure…", "opts": ["45°", "90°", "180°"], "a": 1, "exp": ""}, {"q": "Un triangle a…", "opts": ["3 côtés", "4 côtés", "5 côtés"], "a": 0, "exp": ""}, {"q": "Triangle équilatéral :", "opts": ["3 côtés égaux", "2 côtés égaux", "aucun côté égal"], "a": 0, "exp": ""}, {"q": "Triangle isocèle :", "opts": ["3 côtés égaux", "2 côtés égaux", "1 côté"], "a": 1, "exp": ""}, {"q": "Un angle plat mesure…", "opts": ["90°", "180°", "360°"], "a": 1, "exp": ""}, {"q": "Un carré a…", "opts": ["4 angles droits", "2 angles droits", "0 angle droit"], "a": 0, "exp": ""}, {"q": "Pour mesurer un angle, on utilise…", "opts": ["une règle", "un rapporteur", "un compas"], "a": 1, "exp": ""}, {"q": "Un angle aigu est…", "opts": ["< 90°", "> 90°", "= 180°"], "a": 0, "exp": ""}, {"q": "Un angle obtus est…", "opts": ["< 90°", "> 90° et < 180°", "= 90°"], "a": 1, "exp": ""}, {"q": "Un rectangle a…", "opts": ["4 angles droits", "3 angles droits", "2 angles droits"], "a": 0, "exp": ""}, {"q": "Un triangle a … angles", "opts": ["2", "3", "4"], "a": 1, "exp": ""}, {"q": "Angle droit = angle…", "opts": ["en coin de cahier", "très plat", "tout rond"], "a": 0, "exp": ""}], "m_peri": [{"q": "Périmètre du rectangle : ", "opts": ["L×l", "2×(L+l)", "L+l"], "a": 1, "exp": ""}, {"q": "Aire du rectangle : ", "opts": ["L×l", "2×(L+l)", "L+l"], "a": 0, "exp": ""}, {"q": "Carré côté 5 cm → périmètre", "opts": ["10", "15", "20"], "a": 2, "exp": "4×5=20"}, {"q": "Rectangle L=8, l=3 → périmètre", "opts": ["22", "24", "26"], "a": 0, "exp": "2×(8+3)=22"}, {"q": "Rectangle L=8, l=3 → aire", "opts": ["11", "22", "24"], "a": 2, "exp": "8×3=24"}, {"q": "Unités de l’aire :", "opts": ["cm", "cm²", "m"], "a": 1, "exp": ""}, {"q": "Unités du périmètre :", "opts": ["cm²", "cm", "kg"], "a": 1, "exp": ""}, {"q": "Périmètre = …", "opts": ["surface", "tout le tour", "poids"], "a": 1, "exp": ""}, {"q": "Aire = …", "opts": ["tout le tour", "surface", "hauteur"], "a": 1, "exp": ""}, {"q": "Carré côté 4 → aire", "opts": ["8", "16", "12"], "a": 1, "exp": "4×4=16"}, {"q": "Rectangle L=10, l=2 → aire", "opts": ["12", "20", "24"], "a": 1, "exp": "10×2=20"}, {"q": "Rectangle L=10, l=2 → périmètre", "opts": ["20", "24", "30"], "a": 1, "exp": "2×(10+2)=24"}], "sci_gaz": [{"q": "L’eau est…", "opts": ["solide", "liquide", "gaz"], "a": 1, "exp": ""}, {"q": "La vapeur est…", "opts": ["solide", "liquide", "gaz"], "a": 2, "exp": ""}, {"q": "Une pierre est…", "opts": ["solide", "liquide", "gaz"], "a": 0, "exp": ""}, {"q": "Un gaz est…", "opts": ["invisible et prend de la place", "toujours dur", "toujours froid"], "a": 0, "exp": ""}, {"q": "Le lait est…", "opts": ["solide", "liquide", "gaz"], "a": 1, "exp": ""}, {"q": "La fumée est…", "opts": ["solide", "liquide", "gaz"], "a": 2, "exp": ""}, {"q": "Le bois est…", "opts": ["solide", "liquide", "gaz"], "a": 0, "exp": ""}, {"q": "L’huile est…", "opts": ["solide", "liquide", "gaz"], "a": 1, "exp": ""}, {"q": "L’air est…", "opts": ["solide", "liquide", "gaz"], "a": 2, "exp": ""}, {"q": "Un solide a…", "opts": ["une forme propre", "la forme du récipient", "aucune place"], "a": 0, "exp": ""}, {"q": "Un liquide…", "opts": ["coule", "ne bouge jamais", "est invisible"], "a": 0, "exp": ""}, {"q": "Un gaz…", "opts": ["prend tout l’espace", "reste carré", "a une forme fixe"], "a": 0, "exp": ""}], "sci_air": [{"q": "L’air est…", "opts": ["un gaz", "un liquide", "un solide"], "a": 0, "exp": ""}, {"q": "Le vent est…", "opts": ["de l’air qui bouge", "de l’eau", "de la poussière"], "a": 0, "exp": ""}, {"q": "On respire avec…", "opts": ["les poumons", "les mains", "les pieds"], "a": 0, "exp": ""}, {"q": "Le ballon gonflé montre que l’air…", "opts": ["prend de la place", "n’existe pas", "est lourd comme une pierre"], "a": 0, "exp": ""}, {"q": "L’air est…", "opts": ["visible", "invisible", "toujours coloré"], "a": 1, "exp": ""}, {"q": "Pour respirer, on…", "opts": ["inspire et expire", "saute", "dort"], "a": 0, "exp": ""}, {"q": "L’air contient…", "opts": ["de l’oxygène", "du chocolat", "des cailloux"], "a": 0, "exp": ""}, {"q": "Le vent peut…", "opts": ["faire tourner une éolienne", "arrêter le soleil", "faire tomber la lune"], "a": 0, "exp": ""}, {"q": "Quand on souffle, on envoie…", "opts": ["de l’air", "de l’eau", "du sable"], "a": 0, "exp": ""}, {"q": "L’air occupe…", "opts": ["de la place", "zéro place", "seulement la moitié"], "a": 0, "exp": ""}, {"q": "Sans air, on…", "opts": ["ne peut pas respirer", "peut respirer mieux", "peut nager"], "a": 0, "exp": ""}, {"q": "L’air est partout…", "opts": ["autour de nous", "seulement dans l’eau", "seulement dans la maison"], "a": 0, "exp": ""}], "sci_poll": [{"q": "Pollution = …", "opts": ["salir l’air/l’eau/la terre", "ranger sa chambre", "manger des fruits"], "a": 0, "exp": ""}, {"q": "Jeter par terre, c’est…", "opts": ["bon", "pas bon", "obligatoire"], "a": 1, "exp": ""}, {"q": "Trier les déchets, c’est…", "opts": ["bon", "pas bon", "inutile"], "a": 0, "exp": ""}, {"q": "Fermer le robinet pendant le savonnage, c’est…", "opts": ["bon", "pas bon", "impossible"], "a": 0, "exp": ""}, {"q": "Pour réduire la pollution, on peut…", "opts": ["recycler", "brûler tout", "jeter dans la mer"], "a": 0, "exp": ""}, {"q": "Une fumée noire dans l’air, c’est…", "opts": ["de la pollution", "de l’air propre", "de la pluie"], "a": 0, "exp": ""}, {"q": "Éteindre la lumière en sortant, c’est…", "opts": ["économiser l’énergie", "polluer plus", "gaspiller"], "a": 0, "exp": ""}, {"q": "Planter un arbre aide à…", "opts": ["avoir plus d’air propre", "faire plus de déchets", "salir l’eau"], "a": 0, "exp": ""}, {"q": "Les déchets plastiques dans la mer…", "opts": ["font du mal aux animaux", "aident les poissons", "n’ont aucun effet"], "a": 0, "exp": ""}, {"q": "Se déplacer à pied parfois, c’est…", "opts": ["bon pour l’air", "mauvais pour l’air", "impossible"], "a": 0, "exp": ""}, {"q": "Ne pas jeter les piles n’importe où, c’est…", "opts": ["bon", "pas bon", "inutile"], "a": 0, "exp": ""}, {"q": "Protéger la nature, c’est…", "opts": ["important", "inutile", "interdit"], "a": 0, "exp": ""}], "ar_sarf": [{"q": "« كتبَ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 0, "exp": "حدث في الماضي."}, {"q": "« يكتبُ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 1, "exp": "يحدث الآن/المستقبل."}, {"q": "« اكتبْ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 2, "exp": "طلب."}, {"q": "« لعبَ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 0, "exp": ""}, {"q": "« يلعبُ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 1, "exp": ""}, {"q": "« اِقرأْ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 2, "exp": ""}, {"q": "علامة المضارع غالباً…", "opts": ["يـ / تـ / أ", "لا شيء", "نـ فقط"], "a": 0, "exp": "مثل يكتب."}, {"q": "« ذهبَ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 0, "exp": ""}, {"q": "« يذهبُ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 1, "exp": ""}, {"q": "« اذهبْ » فعل…", "opts": ["ماضٍ", "مضارع", "أمر"], "a": 2, "exp": ""}, {"q": "الماضي يدل على…", "opts": ["الزمن الماضي", "الآن", "الأمر"], "a": 0, "exp": ""}, {"q": "الأمر يدل على…", "opts": ["طلب القيام بالفعل", "حدث في الماضي", "حدث الآن"], "a": 0, "exp": ""}], "ar_tarakib": [{"q": "الجملة الاسمية تبدأ بـ…", "opts": ["اسم", "فعل", "حرف"], "a": 0, "exp": ""}, {"q": "الجملة الفعلية تبدأ بـ…", "opts": ["اسم", "فعل", "نقطة"], "a": 1, "exp": ""}, {"q": "« الجو جميل » جملة…", "opts": ["اسمية", "فعلية"], "a": 0, "exp": ""}, {"q": "« كتبَ الولدُ » جملة…", "opts": ["اسمية", "فعلية"], "a": 1, "exp": ""}, {"q": "المبتدأ في الجملة الاسمية هو…", "opts": ["الاسم الأول", "الفعل", "الحرف"], "a": 0, "exp": ""}, {"q": "الخبر في الجملة الاسمية هو…", "opts": ["يتمم معنى المبتدأ", "اسم الحيوان", "عدد"], "a": 0, "exp": ""}, {"q": "« الطفلُ نشيطٌ »: المبتدأ هو…", "opts": ["الطفلُ", "نشيطٌ", "هو"], "a": 0, "exp": ""}, {"q": "« الطفلُ نشيطٌ »: الخبر هو…", "opts": ["الطفلُ", "نشيطٌ", "هو"], "a": 1, "exp": ""}, {"q": "« يلعبُ الطفلُ »: الفعل هو…", "opts": ["يلعبُ", "الطفلُ", "في"], "a": 0, "exp": ""}, {"q": "« يلعبُ الطفلُ »: الفاعل هو…", "opts": ["يلعبُ", "الطفلُ", "في"], "a": 1, "exp": ""}, {"q": "الجملة الاسمية تتكون من…", "opts": ["مبتدأ + خبر", "فعل + فاعل", "حرف + اسم"], "a": 0, "exp": ""}, {"q": "الجملة الفعلية تتكون من…", "opts": ["فعل + فاعل", "مبتدأ + خبر", "عدد + اسم"], "a": 0, "exp": ""}], "ar_imla": [{"q": "التنوين يكون في آخر…", "opts": ["الاسم", "الفعل", "الحرف"], "a": 0, "exp": ""}, {"q": "كتاب__ (في آخر الجملة)", "opts": ["ٌ", "ٍ", "ً"], "a": 0, "exp": "كتابٌ"}, {"q": "رأيتُ ولد__", "opts": ["ٌ", "ٍ", "ً"], "a": 2, "exp": "ولدًا"}, {"q": "مررتُ ببيت__", "opts": ["ٌ", "ٍ", "ً"], "a": 1, "exp": "بيتٍ"}, {"q": "حرف المد في « باب » هو…", "opts": ["ا", "و", "ي"], "a": 0, "exp": ""}, {"q": "حرف المد في « نور » هو…", "opts": ["ا", "و", "ي"], "a": 1, "exp": ""}, {"q": "حرف المد في « كبير » هو…", "opts": ["ا", "و", "ي"], "a": 2, "exp": ""}, {"q": "التنوين بالفتح (ً) غالباً…", "opts": ["يأتي معه ألف", "يأتي مع واو", "لا يأتي معه شيء"], "a": 0, "exp": ""}, {"q": "المد بالألف يكون بعد…", "opts": ["فتحة", "ضمة", "كسرة"], "a": 0, "exp": ""}, {"q": "المد بالواو يكون بعد…", "opts": ["فتحة", "ضمة", "كسرة"], "a": 1, "exp": ""}, {"q": "المد بالياء يكون بعد…", "opts": ["فتحة", "ضمة", "كسرة"], "a": 2, "exp": ""}, {"q": "كتابٌ: نوع التنوين…", "opts": ["ضم", "كسر", "فتح"], "a": 0, "exp": ""}], "is_wudu": [{"q": "الوضوء شرط لـ…", "opts": ["الصلاة", "الأكل", "النوم"], "a": 0, "exp": ""}, {"q": "نبدأ الوضوء بـ…", "opts": ["النية", "غسل الرجلين", "مسح الرأس"], "a": 0, "exp": ""}, {"q": "من أعضاء الوضوء…", "opts": ["الوجه", "الأذن فقط", "الظهر"], "a": 0, "exp": ""}, {"q": "نغسل اليدين إلى…", "opts": ["المرفقين", "الأصابع فقط", "الكتفين"], "a": 0, "exp": ""}, {"q": "في الوضوء نمسح…", "opts": ["الرأس", "الركبة", "البطن"], "a": 0, "exp": ""}, {"q": "نغسل الرجلين إلى…", "opts": ["الكعبين", "الركبتين", "القدم فقط"], "a": 0, "exp": ""}, {"q": "من سنن الوضوء…", "opts": ["التسمية", "الصراخ", "الجري"], "a": 0, "exp": ""}, {"q": "في الصلاة نقرأ…", "opts": ["الفاتحة", "قصة", "نشيد"], "a": 0, "exp": ""}, {"q": "بعد الركوع يأتي…", "opts": ["السجود", "الأكل", "اللعب"], "a": 0, "exp": ""}, {"q": "عدد السجدات في الركعة…", "opts": ["1", "2", "3"], "a": 1, "exp": ""}, {"q": "الوضوء يكون بـ…", "opts": ["الماء", "التراب دائماً", "العصير"], "a": 0, "exp": ""}, {"q": "المحافظة على الوضوء تعني…", "opts": ["النظافة", "الفوضى", "الكسل"], "a": 0, "exp": ""}], "a_mat": [{"q": "المادة هي…", "opts": ["كل ما له كتلة ويشغل حيزاً", "شيء لا وجود له", "الضوء فقط"], "a": 0, "exp": ""}, {"q": "الخشب مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 0, "exp": ""}, {"q": "الماء مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 1, "exp": ""}, {"q": "الهواء مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 2, "exp": ""}, {"q": "الكتاب مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 0, "exp": ""}, {"q": "الحليب مادة…", "opts": ["صلبة", "سائلة", "غازية"], "a": 1, "exp": ""}, {"q": "الدخان…", "opts": ["غاز", "سائل", "صلب"], "a": 0, "exp": ""}, {"q": "المادة تشغل…", "opts": ["حيزاً", "صفراً", "لا شيء"], "a": 0, "exp": ""}, {"q": "الزجاج…", "opts": ["صلب", "سائل", "غاز"], "a": 0, "exp": ""}, {"q": "العصير…", "opts": ["صلب", "سائل", "غاز"], "a": 1, "exp": ""}, {"q": "الملح…", "opts": ["صلب", "سائل", "غاز"], "a": 0, "exp": ""}, {"q": "الغاز…", "opts": ["يملأ المكان", "له شكل ثابت", "لا يتحرك"], "a": 0, "exp": ""}], "a_mix": [{"q": "الخليط هو…", "opts": ["مزج مادتين أو أكثر", "مادة واحدة", "هواء"], "a": 0, "exp": ""}, {"q": "فصل الرمل عن الماء يكون بـ…", "opts": ["الترشيح", "المغناطيس", "الضغط"], "a": 0, "exp": ""}, {"q": "فصل الحديد عن الرمل يكون بـ…", "opts": ["المغناطيس", "الترشيح", "التجميد"], "a": 0, "exp": ""}, {"q": "الغربلة تصلح لـ…", "opts": ["حبات كبيرة وصغيرة", "الألوان", "الروائح"], "a": 0, "exp": ""}, {"q": "الترشيح يحتاج…", "opts": ["ورق ترشيح/مصفاة", "مطرقة", "ممحاة"], "a": 0, "exp": ""}, {"q": "خليط سكر وماء هو…", "opts": ["محلول", "خشب", "حجر"], "a": 0, "exp": ""}, {"q": "المغناطيس يجذب…", "opts": ["الحديد", "الخشب", "الورق"], "a": 0, "exp": ""}, {"q": "الزيت والماء…", "opts": ["لا يمتزجان جيداً", "يمتزجان دائماً", "يصبحان صلبين"], "a": 0, "exp": ""}, {"q": "خليط رمل وحصى نفصله بـ…", "opts": ["الغربلة", "التسخين", "الذوبان"], "a": 0, "exp": ""}, {"q": "الخلائط مهمة لأن…", "opts": ["نراها في حياتنا", "لا نحتاجها", "ممنوعة"], "a": 0, "exp": ""}, {"q": "فصل الشاي عن الأوراق بـ…", "opts": ["الترشيح", "المغناطيس", "القياس"], "a": 0, "exp": ""}, {"q": "خليط ماء وملح…", "opts": ["محلول", "غاز", "صلب"], "a": 0, "exp": ""}], "a_mag": [{"q": "المغناطيس يجذب…", "opts": ["الحديد", "الخشب", "البلاستيك"], "a": 0, "exp": ""}, {"q": "المسمار يجذبُه…", "opts": ["المغناطيس", "الماء", "الهواء"], "a": 0, "exp": ""}, {"q": "الورق…", "opts": ["لا يجذبه المغناطيس", "يجذبه دائماً", "يصبح حديداً"], "a": 0, "exp": ""}, {"q": "المشبك الورقي…", "opts": ["يجذبه المغناطيس", "لا يجذبه", "يكسره"], "a": 0, "exp": ""}, {"q": "الخاتم الذهبي…", "opts": ["قد لا يجذبه المغناطيس", "يجذبه دائماً", "هو خشب"], "a": 0, "exp": ""}, {"q": "المغناطيس يساعد في فصل…", "opts": ["الحديد عن الرمل", "السكر عن الماء", "الهواء عن الماء"], "a": 0, "exp": ""}, {"q": "الخشب…", "opts": ["لا يجذبه المغناطيس", "يجذبه", "مغناطيس"], "a": 0, "exp": ""}, {"q": "البلاستيك…", "opts": ["لا يجذبه المغناطيس", "يجذبه", "حديد"], "a": 0, "exp": ""}, {"q": "المغناطيس له…", "opts": ["قطبان", "ثلاثة أقطاب", "لا شيء"], "a": 0, "exp": ""}, {"q": "نستخدم المغناطيس في…", "opts": ["الثلاجة", "الشمس", "السماء"], "a": 0, "exp": ""}, {"q": "يمكن للمغناطيس جذب…", "opts": ["برادة الحديد", "الزجاج", "الماء"], "a": 0, "exp": ""}, {"q": "المغناطيس لا يجذب…", "opts": ["الورق", "المسمار", "المشبك"], "a": 0, "exp": ""}]}};
+
+const $ = (q,root=document)=>root.querySelector(q);
+const $$ = (q,root=document)=>Array.from(root.querySelectorAll(q));
+
+const STORE_KEY = "rev_exam_3ap_v5";
+function loadStore(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)||"{}"); }catch(e){ return {}; } }
+function saveStore(obj){ localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
+function norm(s){ return (s||"").toString().trim().toLowerCase().replace(/\s+/g," "); }
+
+const UI = window.APP_DATA.ui;
+function t(lang, key){ return (UI[lang] && UI[lang][key]) || (UI.fr[key]||key); }
+
+function getSubject(key){ return window.APP_DATA.subjects.find(s=>s.key===key); }
+function subjectBankKeys(subKey){
+  const subj = getSubject(subKey);
+  const keys = new Set();
+  (subj?.themes||[]).forEach(th=>{ if(th.bankKey) keys.add(th.bankKey); });
+  return Array.from(keys);
+}
+
+function buildNav(){
+  const nav = $("#navMain");
+  nav.innerHTML = "";
+  const store = loadStore();
+  const tracking = store.tracking || {};
+  const totalLessons = window.APP_DATA.subjects.reduce((n,s)=>n+(s.themes?.length||0),0);
+  const doneCount = Object.values(tracking).filter(v=>v==="Terminé").length;
+
+  function navBtn(item){
+    const b = document.createElement("button");
+    b.className = "navbtn";
+    b.dataset.nav = item.key;
+    b.innerHTML = `${item.label} <span class="badge">${item.badge||""}</span>`;
+    b.addEventListener("click", ()=>{ showPage(item.key); closeMenu(); });
+    return b;
+  }
+
+  nav.appendChild(navBtn({key:"accueil", label:"🏁 Accueil"}));
+  nav.appendChild(navBtn({key:"suivi", label:`✅ Suivi <span class="badge">${doneCount}/${totalLessons}</span>`, badge:""}));
+  nav.appendChild(navBtn({key:"examen", label:"📝 Mode examen (/20)"}));
+
+  const title = document.createElement("div");
+  title.className = "navTitle";
+  title.textContent = "Matières";
+  nav.appendChild(title);
+
+  window.APP_DATA.subjects.forEach(s=>{
+    nav.appendChild(navBtn({key:s.key, label:s.title}));
+  });
+}
+
+function openMenu(){ $("#sidebar").classList.add("open"); }
+function closeMenu(){ $("#sidebar").classList.remove("open"); }
+
+$("#menuBtn").addEventListener("click", openMenu);
+$("#closeMenu").addEventListener("click", closeMenu);
+
+$$("[data-imgmode]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    $$("[data-imgmode]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.body.dataset.img = btn.dataset.imgmode;
+    const st = loadStore(); st.imgMode = btn.dataset.imgmode; saveStore(st);
+  });
+});
+
+$("#darkBtn").addEventListener("click", ()=>{
+  const cur = document.body.dataset.theme || "light";
+  const nxt = cur==="light" ? "dark" : "light";
+  document.body.dataset.theme = nxt;
+  $("#darkBtn").textContent = nxt==="dark" ? "☀️" : "🌙";
+  const st = loadStore(); st.theme = nxt; saveStore(st);
+});
+
+function initSettings(){
+  const st = loadStore();
+  const mode = st.imgMode || "photos";
+  document.body.dataset.img = mode;
+  $$("[data-imgmode]").forEach(b=>b.classList.toggle("active", b.dataset.imgmode===mode));
+  const theme = st.theme || "light";
+  document.body.dataset.theme = theme;
+  $("#darkBtn").textContent = theme==="dark" ? "☀️" : "🌙";
+}
+
+function pageShell(id, title, extraClass=""){
+  const sec = document.createElement("section");
+  sec.className = `card page ${extraClass}`;
+  sec.id = id;
+  sec.dataset.page = id;
+  sec.innerHTML = `<h2>${title}</h2><div data-body></div>`;
+  return sec;
+}
+
+function renderHome(){
+  const sec = pageShell("accueil","Accueil");
+  const body = sec.querySelector("[data-body]");
+  const st = loadStore();
+  const info = st.student || {};
+
+  body.innerHTML = `
+    <div class="notice">
+      <b>Règles de révision (simple)</b>
+      <ul class="list">
+        <li>1) Lis le résumé <b>2 fois</b>.</li>
+        <li>2) Fais les exercices <b>sans regarder</b> la réponse.</li>
+        <li>3) Corrige et écris la bonne réponse.</li>
+        <li>4) Fais un QCM (5 ou 10 questions).</li>
+        <li>5) Reviens après 2 jours pour refaire.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="box-shadow:none">
+      <h3>Profil élève</h3>
+      <div class="row">
+        <div>
+          <label>Nom / Prénom</label>
+          <input id="stName" type="text" value="${info.name||""}" placeholder="Ex: Sara El Amrani"/>
+        </div>
+        <div>
+          <label>Classe / Groupe</label>
+          <input id="stClass" type="text" value="${info.group||""}" placeholder="Ex: 3AP - Groupe A"/>
+        </div>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn primary" id="saveProfile">Enregistrer</button>
+        <button class="btn" id="printBtn">Imprimer / PDF</button>
+      </div>
+      <div class="muted" style="margin-top:8px">Astuce : sur PC, tu peux imprimer en PDF (menu du navigateur).</div>
+    </div>
+
+    <div class="card" style="box-shadow:none">
+      <h3>Plan rapide (au hasard)</h3>
+      <div class="notice" id="todayPlan"></div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn" id="regenPlan">Nouveau plan</button>
+        <button class="btn ok" id="goPlan">Ouvrir le 1er thème</button>
+      </div>
+    </div>
+  `;
+
+  $("#saveProfile", sec).addEventListener("click", ()=>{
+    const st2 = loadStore();
+    st2.student = { name: $("#stName", sec).value.trim(), group: $("#stClass", sec).value.trim() };
+    saveStore(st2);
+    buildNav();
+    alert("Profil enregistré ✅");
+  });
+  $("#printBtn", sec).addEventListener("click", ()=>window.print());
+
+  function randomPlan(){
+    const allThemes = [];
+    window.APP_DATA.subjects.forEach(s=>{
+      (s.themes||[]).forEach(th=>allThemes.push({sub:s.key, subTitle:s.title, theme:th.title}));
+    });
+    function pick(n){
+      const copy = allThemes.slice();
+      const out=[];
+      while(out.length<n && copy.length){
+        const i = Math.floor(Math.random()*copy.length);
+        out.push(copy.splice(i,1)[0]);
+      }
+      return out;
+    }
+    const picked = pick(3);
+    $("#todayPlan", sec).innerHTML = picked.map((p,i)=>`<div><b>${i+1})</b> ${p.subTitle} → <b>${p.theme}</b></div>`).join("");
+    const st2 = loadStore(); st2.todayPlan = picked; saveStore(st2);
+  }
+  $("#regenPlan", sec).addEventListener("click", randomPlan);
+  $("#goPlan", sec).addEventListener("click", ()=>{
+    const st2 = loadStore();
+    const plan = st2.todayPlan || [];
+    if(!plan.length) return;
+    showPage(plan[0].sub);
+    setTimeout(()=>{
+      const el = document.querySelector(`[data-theme-card][data-theme-title="${CSS.escape(plan[0].theme)}"]`);
+      if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    }, 60);
+  });
+  if((st.todayPlan||[]).length) {
+    $("#todayPlan", sec).innerHTML = st.todayPlan.map((p,i)=>`<div><b>${i+1})</b> ${p.subTitle} → <b>${p.theme}</b></div>`).join("");
+  } else {
+    randomPlan();
+  }
+  return sec;
+}
+
+function getTracking(){
+  const st = loadStore();
+  return st.tracking || {};
+}
+function setTracking(tr){
+  const st = loadStore();
+  st.tracking = tr;
+  saveStore(st);
+  buildNav();
+}
+
+function renderTracking(){
+  const sec = pageShell("suivi","Suivi des cours");
+  const body = sec.querySelector("[data-body]");
+  const tracking = getTracking();
+
+  const lessons = [];
+  window.APP_DATA.subjects.forEach(s=>{
+    (s.themes||[]).forEach(th=>lessons.push({id:`${s.key}::${th.key}`, subject:s.title, theme:th.title, lang:th.lang}));
+  });
+
+  const total = lessons.length;
+  const done = lessons.filter(l=>tracking[l.id]==="Terminé").length;
+  const started = lessons.filter(l=>tracking[l.id]==="En cours" || tracking[l.id]==="Terminé").length;
+
+  body.innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><div class="muted">Cours commencés</div><b>${started} / ${total}</b></div>
+      <div class="kpi"><div class="muted">Cours terminés</div><b>${done} / ${total}</b></div>
+      <div class="kpi"><div class="muted">Progression</div><b>${Math.round((done/Math.max(1,total))*100)}%</b></div>
+    </div>
+    <div class="progress" style="margin-top:10px"><div style="width:${(done/Math.max(1,total))*100}%"></div></div>
+
+    <div class="notice" style="margin-top:12px">
+      <b>Statuts</b> : Non entamé / En cours / Terminé.
+      <div class="muted">Conseil : passe à “Terminé” après avoir fait exercices + QCM.</div>
+    </div>
+
+    <div class="card" style="box-shadow:none">
+      <div class="row">
+        <div>
+          <label>Filtrer par matière</label>
+          <select id="filterSub">
+            <option value="">Toutes</option>
+            ${window.APP_DATA.subjects.map(s=>`<option value="${s.key}">${s.title}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Recherche</label>
+          <input id="filterText" type="text" placeholder="Tape un mot…"/>
+        </div>
+      </div>
+    </div>
+
+    <div id="trackList"></div>
+  `;
+
+  function renderList(){
+    const sub = $("#filterSub", sec).value;
+    const q = norm($("#filterText", sec).value);
+    const list = $("#trackList", sec);
+    list.innerHTML = "";
+
+    lessons
+      .filter(l=>!sub || l.id.startsWith(sub+"::"))
+      .filter(l=>!q || norm(l.theme).includes(q) || norm(l.subject).includes(q))
+      .forEach((l)=> {
+        const st = tracking[l.id] || "Non entamé";
+        const item = document.createElement("div");
+        item.className = "exerciseItem";
+        item.innerHTML = `
+          <div class="top">
+            <div>
+              <b>${l.subject}</b>
+              <div class="muted">${l.theme}</div>
+            </div>
+            <div style="min-width:180px">
+              <select data-id="${l.id}">
+                <option ${st==="Non entamé"?"selected":""}>Non entamé</option>
+                <option ${st==="En cours"?"selected":""}>En cours</option>
+                <option ${st==="Terminé"?"selected":""}>Terminé</option>
+              </select>
+              <div style="margin-top:8px">
+                <button class="btn" data-open="${l.id}">Ouvrir</button>
+              </div>
+            </div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+
+    $$("select[data-id]", sec).forEach(sel=>{
+      sel.addEventListener("change", ()=>{
+        tracking[sel.dataset.id] = sel.value;
+        setTracking(tracking);
+      });
+    });
+    $$("button[data-open]", sec).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const [subKey, themeKey] = btn.dataset.open.split("::");
+        showPage(subKey);
+        setTimeout(()=>{
+          const card = document.querySelector(`[data-theme-card][data-theme-key="${CSS.escape(themeKey)}"]`);
+          if(card) card.scrollIntoView({behavior:"smooth", block:"start"});
+        }, 60);
+      });
+    });
+  }
+
+  $("#filterSub", sec).addEventListener("change", renderList);
+  $("#filterText", sec).addEventListener("input", renderList);
+  renderList();
+
+  return sec;
+}
+
+function exerciseRenderer(theme, ex, idx){
+  const lang = theme.lang;
+  const box = document.createElement("div");
+  box.className = "exerciseItem";
+
+  function mkAnswer(html){
+    const a = document.createElement("div");
+    a.className = "answer";
+    a.innerHTML = html;
+    return a;
+  }
+
+  const top = document.createElement("div");
+  top.className = "top";
+  top.innerHTML = `<div><b>${ex.title || (t(lang,"exercises")+" "+(idx+1))}</b></div>
+                   <div style="display:flex; gap:8px; flex-wrap:wrap">
+                     <button class="btn" data-show>${t(lang,"show_answers")}</button>
+                     <button class="btn" data-hide>${t(lang,"hide_answers")}</button>
+                   </div>`;
+  box.appendChild(top);
+
+  const content = document.createElement("div");
+  box.appendChild(content);
+
+  const ans = mkAnswer("");
+  box.appendChild(ans);
+
+  function showAns(){ ans.classList.add("show"); }
+  function hideAns(){ ans.classList.remove("show"); }
+  $("[data-show]", top).addEventListener("click", showAns);
+  $("[data-hide]", top).addEventListener("click", hideAns);
+
+  if(ex.type === "fill"){
+    const rows = ex.items.map((it,i)=>`
+      <div class="grid" style="margin:8px 0">
+        <div>
+          <div class="muted">${it.hint||""}</div>
+          <div><span>${it.text.replace("_____", "<span class='tag'>_____</span>")}</span></div>
+          <input type="text" data-inp="${i}" placeholder="${lang==="ar"?"اكتب الجواب…":"Écris la réponse…"}"/>
+        </div>
+        <button class="btn primary" data-check="${i}">${t(lang,"check")}</button>
+      </div>
+      <div class="muted" data-msg="${i}"></div>
+    `).join("");
+    content.innerHTML = rows;
+    ans.innerHTML = ex.items.map((it)=>`<div>✅ <b>${it.text.replace("_____", it.answer)}</b></div>`).join("");
+
+    $$("[data-check]", content).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = parseInt(btn.dataset.check,10);
+        const inp = $(`[data-inp="${i}"]`, content);
+        const msg = $(`[data-msg="${i}"]`, content);
+        const ok = norm(inp.value) === norm(ex.items[i].answer);
+        msg.innerHTML = ok ? `<span class="good">✅ OK</span>` : `<span class="bad">❌ Non</span> <span class="muted">→ ${ex.items[i].answer}</span>`;
+      });
+    });
+  } else if(ex.type === "choose"){
+    content.innerHTML = ex.items.map((it,i)=>{
+      const name = `c_${theme.key}_${idx}_${i}`;
+      const opts = it.opts.map((o,j)=>`
+        <label class="opt"><input type="radio" name="${name}" value="${j}"/> <span>${o}</span></label>
+      `).join("");
+      return `<div style="margin:10px 0">
+        <b>${it.q}</b>
+        <div>${opts}</div>
+        <button class="btn primary" data-cq="${i}">${t(lang,"check")}</button>
+        <div class="muted" data-cm="${i}"></div>
+      </div>`;
+    }).join("");
+    ans.innerHTML = ex.items.map((it)=>`<div>✅ <b>${it.opts[it.a]}</b> — <span class="muted">${it.q}</span></div>`).join("");
+    $$("[data-cq]", content).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = parseInt(btn.dataset.cq,10);
+        const name = `c_${theme.key}_${idx}_${i}`;
+        const chosen = document.querySelector(`input[name="${name}"]:checked`);
+        const msg = $(`[data-cm="${i}"]`, content);
+        if(!chosen){ msg.innerHTML = `<span class="warn">⚠️ ${lang==="ar"?"اختر جواباً":"Choisis une réponse"}</span>`; return; }
+        const ok = parseInt(chosen.value,10) === ex.items[i].a;
+        msg.innerHTML = ok ? `<span class="good">✅ OK</span>` : `<span class="bad">❌</span> <span class="muted">→ ${ex.items[i].opts[ex.items[i].a]}</span>`;
+      });
+    });
+  } else if(ex.type === "calc"){
+    content.innerHTML = ex.items.map((it,i)=>`
+      <div class="grid" style="margin:8px 0">
+        <div>
+          <b>${it.q}</b>
+          <input type="text" data-inp="${i}" placeholder="..."/>
+          <div class="muted" data-msg="${i}"></div>
+        </div>
+        <button class="btn primary" data-check="${i}">${t(lang,"check")}</button>
+      </div>
+    `).join("");
+    ans.innerHTML = ex.items.map((it)=>`<div>✅ <b>${it.q} ${it.a}</b> <span class="muted">${it.hint?("("+it.hint+")"):""}</span></div>`).join("");
+    $$("[data-check]", content).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = parseInt(btn.dataset.check,10);
+        const inp = $(`[data-inp="${i}"]`, content);
+        const msg = $(`[data-msg="${i}"]`, content);
+        const ok = norm(inp.value) === norm(ex.items[i].a);
+        msg.innerHTML = ok ? `<span class="good">✅ OK</span>` : `<span class="bad">❌</span> <span class="muted">→ ${ex.items[i].a}</span>`;
+      });
+    });
+  } else if(ex.type === "sort"){
+    content.innerHTML = `
+      <div class="notice">${lang==="ar"?"اختر العمود المناسب لكل كلمة.":"Choisis la bonne colonne pour chaque mot."}</div>
+      ${ex.items.map((it,i)=>`
+        <div class="grid" style="margin:8px 0">
+          <div><b>${it.text}</b></div>
+          <select data-inp="${i}">
+            ${ex.cols.map((c,ci)=>`<option value="${ci}">${c}</option>`).join("")}
+          </select>
+        </div>
+      `).join("")}
+      <button class="btn primary" data-checkall>${t(lang,"check")}</button>
+      <div class="muted" data-msgall></div>
+    `;
+    ans.innerHTML = ex.items.map(it=>`<div>✅ <b>${it.text}</b> → ${ex.cols[it.col]}</div>`).join("");
+    $("[data-checkall]", content).addEventListener("click", ()=>{
+      let ok=0;
+      ex.items.forEach((it,i)=>{
+        const v = parseInt($(`[data-inp="${i}"]`, content).value,10);
+        if(v===it.col) ok++;
+      });
+      $("[data-msgall]", content).innerHTML = (ok===ex.items.length)
+        ? `<span class="good">✅ ${ok}/${ex.items.length}</span>`
+        : `<span class="warn">⚠️ ${ok}/${ex.items.length}</span> <span class="muted">${lang==="ar"?"ثم اضغط إظهار الأجوبة للتصحيح.":"Puis affiche les réponses pour corriger."}</span>`;
+    });
+  } else if(ex.type === "match"){
+    const right = ex.pairs.map(p=>p[1]);
+    content.innerHTML = `
+      <div class="notice">${lang==="ar"?"اربط الكلمة بمرادفها.":"Associe le mot à son synonyme."}</div>
+      ${ex.pairs.map((p,i)=>`
+        <div class="grid" style="margin:8px 0">
+          <div><b>${p[0]}</b></div>
+          <select data-inp="${i}">
+            ${right.map(r=>`<option value="${r}">${r}</option>`).join("")}
+          </select>
+        </div>
+      `).join("")}
+      <button class="btn primary" data-checkall>${t(lang,"check")}</button>
+      <div class="muted" data-msgall></div>
+    `;
+    ans.innerHTML = ex.pairs.map(p=>`<div>✅ <b>${p[0]}</b> ↔ ${p[1]}</div>`).join("");
+    $("[data-checkall]", content).addEventListener("click", ()=>{
+      let ok=0;
+      ex.pairs.forEach((p,i)=>{ if($(`[data-inp="${i}"]`, content).value===p[1]) ok++; });
+      $("[data-msgall]", content).innerHTML = ok===ex.pairs.length ? `<span class="good">✅ ${ok}/${ex.pairs.length}</span>` : `<span class="warn">⚠️ ${ok}/${ex.pairs.length}</span>`;
+    });
+  } else if(ex.type === "transform"){
+    const fromLabel = (ex.labels && ex.labels.from) || (lang==="ar"?"الجملة":"Phrase");
+    const toLabel = (ex.labels && ex.labels.to) || (lang==="ar"?"التحويل":"Transformation");
+    content.innerHTML = ex.items.map((it,i)=>`
+      <div style="margin:10px 0">
+        <div class="muted">${fromLabel}</div>
+        <b>${it.pos || it.neg}</b>
+        <div class="muted" style="margin-top:6px">${toLabel}</div>
+        <input type="text" data-inp="${i}" placeholder="..."/>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn primary" data-check="${i}">${t(lang,"check")}</button>
+        </div>
+        <div class="muted" data-msg="${i}"></div>
+      </div>
+    `).join("");
+    ans.innerHTML = ex.items.map(it=>`<div>✅ <b>${it.neg || it.pos}</b></div>`).join("");
+    $$("[data-check]", content).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i=parseInt(btn.dataset.check,10);
+        const expected = ex.items[i].neg || ex.items[i].pos;
+        const inp = $(`[data-inp="${i}"]`, content);
+        const msg = $(`[data-msg="${i}"]`, content);
+        const ok = norm(inp.value) === norm(expected);
+        msg.innerHTML = ok ? `<span class="good">✅ OK</span>` : `<span class="bad">❌</span> <span class="muted">→ ${expected}</span>`;
+      });
+    });
+  } else if(ex.type === "conj"){
+    content.innerHTML = ex.items.map((it,i)=>{
+      const rows = it.persons.map((p,pi)=>`
+        <div class="grid" style="margin:6px 0">
+          <div><b>${p}</b> ( ${it.verb} )</div>
+          <input data-inp="${i}_${pi}" type="text" placeholder="..."/>
+        </div>
+      `).join("");
+      return `<div class="notice" style="margin:10px 0"><b>${it.verb}</b></div>${rows}
+              <button class="btn primary" data-check="${i}">${t(lang,"check")}</button>
+              <div class="muted" data-msg="${i}"></div>`;
+    }).join("");
+    ans.innerHTML = ex.items.map(it=>`<div style="margin:8px 0"><b>${it.verb}</b> : ${it.answers.join(" • ")}</div>`).join("");
+    $$("[data-check]", content).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = parseInt(btn.dataset.check,10);
+        const it = ex.items[i];
+        let ok=0;
+        it.answers.forEach((a,pi)=>{
+          const v = norm($(`[data-inp="${i}_${pi}"]`, content).value);
+          if(v===norm(a)) ok++;
+        });
+        $(`[data-msg="${i}"]`, content).innerHTML = ok===it.answers.length ? `<span class="good">✅ ${ok}/${it.answers.length}</span>` : `<span class="warn">⚠️ ${ok}/${it.answers.length}</span>`;
+      });
+    });
+  } else if(ex.type === "plan"){
+    content.innerHTML = (ex.fields||[]).map((f,i)=>`
+      <div style="margin:10px 0">
+        <label><b>${f.label}</b></label>
+        <textarea data-inp="${i}" placeholder="${f.placeholder||""}"></textarea>
+      </div>
+    `).join("") + `<div class="muted">${lang==="ar"?"ثم اضغط إظهار الأجوبة لرؤية مثال.":"Puis affiche les réponses pour voir un exemple."}</div>`;
+    ans.innerHTML = (ex.model||[]).map(line=>`<div>✅ ${line}</div>`).join("");
+  } else if(ex.type === "order"){
+    content.innerHTML = `
+      <div class="notice">${lang==="ar"?"اختر الترتيب الصحيح (1 ثم 2…).":"Choisis l’ordre correct (1 puis 2…)."}
+      </div>
+      ${ex.items.map((it,i)=>`
+        <div class="grid" style="margin:8px 0">
+          <div><b>${it}</b></div>
+          <select data-inp="${i}">
+            ${ex.items.map((_,n)=>`<option value="${n}">${n+1}</option>`).join("")}
+          </select>
+        </div>
+      `).join("")}
+      <button class="btn primary" data-checkall>${t(lang,"check")}</button>
+      <div class="muted" data-msgall></div>
+    `;
+    ans.innerHTML = ex.answer.map((it,idx)=>`<div>✅ ${idx+1}) ${it}</div>`).join("");
+    $("[data-checkall]", content).addEventListener("click", ()=>{
+      const chosen = ex.items.map((_,i)=>parseInt($(`[data-inp="${i}"]`, content).value,10));
+      let ok=0;
+      ex.items.forEach((item,i)=>{
+        const rank = chosen[i];
+        const correctRank = ex.answer.indexOf(item);
+        if(rank===correctRank) ok++;
+      });
+      $("[data-msgall]", content).innerHTML = ok===ex.items.length ? `<span class="good">✅ ${ok}/${ex.items.length}</span>` : `<span class="warn">⚠️ ${ok}/${ex.items.length}</span>`;
+    });
+  } else if(ex.type === "recite"){
+    const ay = ex.ayat || [];
+    let shown = 0;
+    content.innerHTML = `
+      <div class="notice">
+        <b>${ex.surah?.name||""}</b><br/>
+        <span class="muted">${lang==="ar"?"اضغط لإظهار الآيات واحدة واحدة.":"Clique pour afficher les versets un par un."}</span>
+      </div>
+      <div class="examBox" style="margin-top:10px">
+        <div class="notice arPage" id="ayatBox_${theme.key}_${idx}"></div>
+        <div class="examNav">
+          <button class="btn primary" id="nextAy_${theme.key}_${idx}">+ آية</button>
+          <button class="btn" id="resetAy_${theme.key}_${idx}">إعادة</button>
+          <span class="tag" id="statAy_${theme.key}_${idx}"></span>
+        </div>
+        <details class="collapsible">
+          <summary>🎧 استماع (اختياري) <span class="tag">قد يحتاج إنترنت</span></summary>
+          <div class="content">
+            <audio controls preload="none" style="width:100%">
+              <source src="${ex.surah?.audio_hi||""}" type="audio/mpeg"/>
+            </audio>
+            <div class="muted" style="margin-top:8px">
+              إذا لم يعمل الصوت، جرّب الرابطين:
+              <div><a target="_blank" rel="noopener" href="${ex.surah?.audio_hi||""}">جودة عالية</a></div>
+              <div><a target="_blank" rel="noopener" href="${ex.surah?.audio_norm||""}">جودة عادية</a></div>
+            </div>
+          </div>
+        </details>
+      </div>
+    `;
+    const boxEl = $(`#ayatBox_${theme.key}_${idx}`, content);
+    const statEl = $(`#statAy_${theme.key}_${idx}`, content);
+
+    function renderAy(){
+      boxEl.innerHTML = "";
+      for(let i=0;i<shown;i++) {
+        const p = document.createElement("p");
+        p.textContent = ay[i];
+        boxEl.appendChild(p);
+      }
+      const total = Math.max(0, ay.length-1);
+      const shownNoB = Math.max(0, shown-1);
+      statEl.textContent = `الآيات: ${shownNoB} / ${total}`;
+      $(`#nextAy_${theme.key}_${idx}`, content).disabled = shown >= ay.length;
+    }
+    $(`#nextAy_${theme.key}_${idx}`, content).addEventListener("click", ()=>{ shown = Math.min(ay.length, shown+1); renderAy(); });
+    $(`#resetAy_${theme.key}_${idx}`, content).addEventListener("click", ()=>{ shown = 0; renderAy(); });
+    renderAy();
+    ans.innerHTML = `<div class="muted">${lang==="ar"?"التصحيح: التلاوة والحفظ بالتكرار.":"Correction: lire et répéter."}</div>`;
+  } else {
+    content.innerHTML = `<div class="muted">Exercice غير متوفر / Non disponible</div>`;
+    ans.innerHTML = "";
+  }
+
+  return box;
+}
+
+function renderThemeCard(subj, theme){
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.themeCard = "1";
+  card.dataset.themeKey = theme.key;
+  card.dataset.themeTitle = theme.title;
+
+  const lang = theme.lang;
+  const trackingId = `${subj.key}::${theme.key}`;
+  const tracking = getTracking();
+  const st = tracking[trackingId] || "Non entamé";
+
+  const header = document.createElement("div");
+  header.className = "themeHeader";
+  header.innerHTML = `
+    <div class="left">
+      <h3 style="margin:0">${theme.title}</h3>
+      <div class="muted">${subj.title}</div>
+    </div>
+    <div class="right">
+      <span class="tag">${lang==="ar"?"عربي":"Français"}</span>
+      <select data-track style="width:auto; min-width:160px">
+        <option ${st==="Non entamé"?"selected":""}>Non entamé</option>
+        <option ${st==="En cours"?"selected":""}>En cours</option>
+        <option ${st==="Terminé"?"selected":""}>Terminé</option>
+      </select>
+    </div>
+  `;
+  card.appendChild(header);
+
+  $("[data-track]", header).addEventListener("change",(e)=>{
+    const tr = getTracking();
+    tr[trackingId] = e.target.value;
+    setTracking(tr);
+  });
+
+  const sum = document.createElement("details");
+  sum.className = "collapsible";
+  sum.open = true;
+  sum.innerHTML = `<summary>📌 ${t(lang,"resume")} <span class="tag">${theme.summary.length} points</span></summary>
+                  <div class="content"><ul class="list">${theme.summary.map(s=>`<li>${s}</li>`).join("")}</ul></div>`;
+  card.appendChild(sum);
+
+  if((theme.images||[]).length){
+    const img = document.createElement("details");
+    img.className = "collapsible";
+    img.innerHTML = `<summary>🖼️ Illustrations <span class="tag">animaux/objets</span></summary>
+      <div class="content">
+        <div class="photoRow">
+          ${theme.images.map((im)=>`
+            <div class="figure">
+              <img loading="lazy" alt="${im.label}" src="${im.photo||""}" onerror="this.style.display='none'"/>
+              <svg class="emoji" viewBox="0 0 600 240" aria-label="${im.label}">
+                <rect x="0" y="0" width="600" height="240" rx="18" fill="rgba(0,0,0,.03)"></rect>
+                <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-size="90">${im.svg||"📌"}</text>
+              </svg>
+              <div class="cap">${im.label}</div>
+            </div>
+          `).join("")}
+        </div>
+        <div class="muted" style="margin-top:8px">Astuce : mets “Dessins” si tu n’as pas Internet.</div>
+      </div>`;
+    card.appendChild(img);
+  }
+
+  const exWrap = document.createElement("details");
+  exWrap.className = "collapsible";
+  exWrap.open = true;
+  exWrap.innerHTML = `<summary>🧩 ${t(lang,"exercises")} <span class="tag">${theme.exercises.length}</span></summary><div class="content" data-ex></div>`;
+  card.appendChild(exWrap);
+  const exBody = $("[data-ex]", exWrap);
+  theme.exercises.forEach((ex, i)=>{ exBody.appendChild(exerciseRenderer(theme, ex, i)); });
+
+  if(theme.bankKey){
+    const qcm = document.createElement("details");
+    qcm.className = "collapsible";
+    qcm.innerHTML = `<summary>🧠 ${t(lang,"qcm")} <span class="tag">au hasard</span></summary>
+      <div class="content">
+        <div class="row">
+          <div>
+            <label>${lang==="ar"?"عدد الأسئلة":"Nombre de questions"}</label>
+            <select data-qN>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+              <button class="btn primary" data-new>${t(lang,"new_qcm")}</button>
+              <button class="btn" data-check>${t(lang,"check")}</button>
+            </div>
+          </div>
+        </div>
+        <div class="muted" data-status style="margin-top:8px"></div>
+        <div data-list style="margin-top:8px"></div>
+      </div>`;
+    card.appendChild(qcm);
+    initQcmGenerator(qcm, theme.bankKey, lang);
+  }
+
+  const tips = document.createElement("details");
+  tips.className = "collapsible";
+  tips.innerHTML = `<summary>✨ ${t(lang,"tips")} <span class="tag">${theme.tips.length}</span></summary>
+    <div class="content">
+      <ul class="list">${theme.tips.map(x=>`<li>${x}</li>`).join("")}</ul>
+    </div>`;
+  card.appendChild(tips);
+
+  return card;
+}
+
+function pickRandom(arr, n){
+  const a = (arr||[]).slice();
+  const out=[];
+  while(out.length<n && a.length){
+    out.push(a.splice(Math.floor(Math.random()*a.length),1)[0]);
+  }
+  while(out.length<n && (arr||[]).length){
+    out.push(arr[Math.floor(Math.random()*arr.length)]);
+  }
+  return out;
+}
+
+function initQcmGenerator(detailsEl, bankKey, lang){
+  const list = $("[data-list]", detailsEl);
+  const status = $("[data-status]", detailsEl);
+  const btnNew = $("[data-new]", detailsEl);
+  const btnCheck = $("[data-check]", detailsEl);
+  const selN = $("[data-qN]", detailsEl);
+
+  let current = [];
+  function render(){
+    list.innerHTML = "";
+    status.textContent = "";
+    const n = parseInt(selN.value,10) || 5;
+    current = pickRandom(window.APP_DATA.bank[bankKey]||[], n);
+
+    if((window.APP_DATA.bank[bankKey]||[]).length < n){
+      status.innerHTML = `<span class="warn">⚠️</span> ${lang==="ar"?"عدد الأسئلة المتاحة قليل، قد تتكرر بعض الأسئلة.":"Banque courte : quelques questions peuvent se répéter."}`;
+    }
+
+    current.forEach((it, i)=>{
+      const q = document.createElement("div");
+      q.className = "exerciseItem";
+      const name = `g_${bankKey}_${Math.random().toString(16).slice(2)}_${i}`;
+      q.innerHTML = `
+        <b>${i+1}) ${it.q}</b>
+        <div style="margin-top:6px">
+          ${it.opts.map((o,j)=>`<label class="opt"><input type="radio" name="${name}" value="${j}"/> <span>${o}</span></label>`).join("")}
+        </div>
+        <div class="muted" data-msg style="margin-top:6px"></div>
+        <div class="answer" data-exp></div>
+      `;
+      list.appendChild(q);
+    });
+  }
+
+  function check(){
+    let correct=0;
+    $$(".exerciseItem", list).forEach((box, i)=>{
+      const chosen = box.querySelector("input[type=radio]:checked");
+      const msg = box.querySelector("[data-msg]");
+      const exp = box.querySelector("[data-exp]");
+      if(!chosen){
+        msg.innerHTML = `<span class="warn">⚠️</span> ${lang==="ar"?"اختر جواباً":"Choisis une réponse"}`;
+        return;
+      }
+      const ok = parseInt(chosen.value,10) === current[i].a;
+      if(ok) correct++;
+      msg.innerHTML = ok ? `<span class="good">✅ OK</span>` : `<span class="bad">❌</span> <span class="muted">→ ${current[i].opts[current[i].a]}</span>`;
+      exp.classList.add("show");
+      exp.innerHTML = current[i].exp ? `💡 ${current[i].exp}` : "";
+    });
+    status.innerHTML = `${t(lang,"score")} : <b>${correct}</b> / <b>${$$(".exerciseItem", list).length}</b>`;
+  }
+
+  btnNew.addEventListener("click", render);
+  btnCheck.addEventListener("click", check);
+  selN.addEventListener("change", render);
+  render();
+}
+
+function renderSubjectPage(subKey){
+  const subj = getSubject(subKey);
+  const sec = pageShell(subKey, subj.title, subj.lang==="ar" ? "arPage" : "");
+  const body = sec.querySelector("[data-body]");
+
+  const jump = document.createElement("div");
+  jump.className = "card";
+  jump.style.boxShadow = "none";
+  jump.innerHTML = `
+    <div class="row">
+      <div>
+        <label>${subj.lang==="ar"?"اختر الدرس":"Choisir un thème"}</label>
+        <select id="jumpSel_${subKey}">
+          <option value="">—</option>
+          ${subj.themes.map(th=>`<option value="${th.key}">${th.title}</option>`).join("")}
+        </select>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn" id="jumpBtn_${subKey}">${subj.lang==="ar"?"اذهب":"Aller"}</button>
+          <button class="btn" id="markAll_${subKey}">${subj.lang==="ar"?"تعليم الكل (منجز)":"Tout marquer terminé"}</button>
+        </div>
+      </div>
+    </div>
+  `;
+  body.appendChild(jump);
+
+  const list = document.createElement("div");
+  body.appendChild(list);
+
+  subj.themes.forEach(th=>{ list.appendChild(renderThemeCard(subj, th)); });
+
+  $(`#jumpBtn_${subKey}`, sec).addEventListener("click", ()=>{
+    const k = $(`#jumpSel_${subKey}`, sec).value;
+    const card = document.querySelector(`[data-theme-card][data-theme-key="${CSS.escape(k)}"]`);
+    if(card) card.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+
+  $(`#markAll_${subKey}`, sec).addEventListener("click", ()=>{
+    const tr = getTracking();
+    subj.themes.forEach(th=>{ tr[`${subKey}::${th.key}`] = "Terminé"; });
+    setTracking(tr);
+    alert("✅ OK");
+  });
+
+  return sec;
+}
+
+function renderExamPage(){
+  const sec = pageShell("examen","Mode examen (/20)");
+  const body = sec.querySelector("[data-body]");
+  const st = loadStore();
+  const history = st.examHistory || [];
+
+  body.innerHTML = `
+    <div class="notice">
+      <b>Mode examen</b> : réponses <b>bloquées</b> jusqu’à la fin → note /20 → corrections à la demande.
+      <div class="muted">Conseil : fais une seule fois, comme à l’école.</div>
+    </div>
+
+    <div class="card" style="box-shadow:none">
+      <div class="row">
+        <div>
+          <label>Matière</label>
+          <select id="examSub">
+            ${window.APP_DATA.subjects.map(s=>`<option value="${s.key}">${s.title}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Durée (minutes)</label>
+          <select id="examMin">
+            <option value="0">Sans chrono</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20" selected>20</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn primary" id="startExam">Commencer (20 questions)</button>
+        <button class="btn" id="resetExam">Réinitialiser</button>
+      </div>
+      <div class="muted" id="examWarn" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card" style="box-shadow:none">
+      <h3>Historique</h3>
+      <div class="muted">${history.length ? "" : "Aucun examen enregistré pour l’instant."}</div>
+      <div id="histList" style="margin-top:8px"></div>
+    </div>
+
+    <div id="examArea"></div>
+  `;
+
+  function renderHistory(){
+    const list = $("#histList", sec);
+    list.innerHTML = history.slice().reverse().slice(0,8).map(h=>`
+      <div class="exerciseItem">
+        <div class="top">
+          <div><b>${h.subject}</b><div class="muted">${h.date}</div></div>
+          <div class="tag">${h.score}/20</div>
+        </div>
+      </div>
+    `).join("");
+  }
+  renderHistory();
+
+  let examState = null;
+  let timerId = null;
+  function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+
+  function start(){
+    stopTimer();
+    const subKey = $("#examSub", sec).value;
+    const mins = parseInt($("#examMin", sec).value,10) || 0;
+
+    const keys = subjectBankKeys(subKey);
+    const pool = keys.flatMap(k => (window.APP_DATA.bank[k]||[]).map(q=>({...q, _k:k})));
+    const warn = $("#examWarn", sec);
+
+    if(pool.length < 20){
+      warn.innerHTML = `<span class="warn">⚠️</span> Banque petite (${pool.length}). Des questions peuvent se répéter.`;
+    } else {
+      warn.textContent = "";
+    }
+
+    const questions = pickRandom(pool, 20);
+    examState = {
+      subKey,
+      subject: getSubject(subKey).title,
+      mins,
+      questions,
+      answers: Array(20).fill(null),
+      finished:false,
+      score:null,
+      showCorrections:false
+    };
+
+    renderExam();
+    if(mins>0) startTimer(mins*60);
+  }
+
+  function startTimer(seconds){
+    let left = seconds;
+    function tick(){
+      left = Math.max(0, left-1);
+      const m = Math.floor(left/60);
+      const s = left%60;
+      $("#timer", sec).textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+      if(left<=0){
+        stopTimer();
+        finish(true);
+      }
+    }
+    $("#timer", sec).textContent = `${String(Math.floor(left/60)).padStart(2,"0")}:${String(left%60).padStart(2,"0")}`;
+    timerId = setInterval(tick, 1000);
+  }
+
+  function goto(i){
+    const card = document.querySelector(`[data-exam-q="${i}"]`);
+    if(card) card.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  function finish(auto=false){
+    if(!examState || examState.finished) return;
+    examState.finished = true;
+    let correct=0;
+    examState.questions.forEach((q,i)=>{ if(examState.answers[i]===q.a) correct++; });
+    examState.score = correct;
+    stopTimer();
+    renderExam();
+
+    const st2 = loadStore();
+    st2.examHistory = st2.examHistory || [];
+    const date = new Date().toLocaleString();
+    st2.examHistory.push({date, subject: examState.subject, score: correct});
+    saveStore(st2);
+    history.push({date, subject: examState.subject, score: correct});
+    renderHistory();
+  }
+
+  function renderExam(){
+    const area = $("#examArea", sec);
+    if(!examState){ area.innerHTML=""; return; }
+    const lang = getSubject(examState.subKey).lang || "fr";
+
+    area.innerHTML = `
+      <div class="card">
+        <div class="themeHeader">
+          <div class="left">
+            <h3 style="margin:0">Examen : ${examState.subject}</h3>
+            <div class="muted">20 questions • note /20</div>
+          </div>
+          <div class="right">
+            <span class="tag">${examState.mins>0 ? "⏱️ Chrono : " : ""}<span id="timer" class="timer">${examState.mins>0 ? "00:00" : "Sans chrono"}</span></span>
+            <button class="btn" id="jumpTop">⬆️ Haut</button>
+          </div>
+        </div>
+
+        <div class="qGrid" style="margin-top:10px" id="qGrid"></div>
+
+        <div class="examNav" style="margin-top:10px">
+          <button class="btn primary" id="finishBtn">${examState.finished ? "Terminé" : "Corriger (Note /20)"}</button>
+          <button class="btn" id="toggleCorr" ${!examState.finished ? "disabled" : ""}>${examState.showCorrections ? "Masquer corrections" : "Afficher corrections"}</button>
+          <span class="tag">${examState.finished ? ("Note : " + examState.score + "/20") : "Réponses cachées jusqu’à la fin"}</span>
+        </div>
+      </div>
+
+      <div class="card ${lang==="ar" ? "arPage" : ""}">
+        ${examState.questions.map((q,i)=>{
+          const name = `ex_${i}`;
+          const chosen = examState.answers[i];
+          const corr = examState.finished && examState.showCorrections;
+          const good = examState.finished && (chosen===q.a);
+          return `
+            <div class="exerciseItem" data-exam-q="${i}">
+              <div class="top">
+                <div>
+                  <b>${i+1}) ${q.q}</b>
+                  <div class="muted">${q._k}</div>
+                </div>
+                <div class="tag">${chosen===null ? "—" : "✓"}</div>
+              </div>
+              <div style="margin-top:6px">
+                ${q.opts.map((o,j)=>`
+                  <label class="opt">
+                    <input type="radio" name="${name}" value="${j}" ${chosen===j?"checked":""} ${examState.finished?"disabled":""}/>
+                    <span>${o}</span>
+                  </label>
+                `).join("")}
+              </div>
+              <div class="muted" style="margin-top:6px">
+                ${examState.finished ? (good ? "<span class='good'>✅ Correct</span>" : (chosen===null ? "<span class='warn'>⚠️ Non répondu</span>" : "<span class='bad'>❌ Faux</span>")) : "<span class='muted'>Réponse bloquée (examen)</span>"}
+              </div>
+              <div class="answer ${corr?"show":""}">
+                ✅ Bonne réponse : <b>${q.opts[q.a]}</b><br/>
+                ${q.exp ? ("💡 " + q.exp) : ""}
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    $("#jumpTop", area).addEventListener("click", ()=>window.scrollTo({top:0, behavior:"smooth"}));
+    $("#finishBtn", area).addEventListener("click", ()=>{ if(!examState.finished) finish(false); });
+    $("#toggleCorr", area).addEventListener("click", ()=>{ if(!examState.finished) return; examState.showCorrections = !examState.showCorrections; renderExam(); });
+
+    const grid = $("#qGrid", area);
+    examState.questions.forEach((_,i)=>{
+      const chip = document.createElement("div");
+      chip.className = "qChip";
+      chip.textContent = (i+1);
+      if(examState.answers[i]!==null) chip.classList.add("done");
+      if(examState.finished){
+        const chosen = examState.answers[i];
+        if(chosen===examState.questions[i].a) chip.classList.add("good");
+        else if(chosen!==null) chip.classList.add("bad");
+      }
+      chip.addEventListener("click", ()=>goto(i));
+      grid.appendChild(chip);
+    });
+
+    $$('input[type="radio"]', area).forEach(r=>{
+      r.addEventListener("change", ()=>{
+        const i = parseInt(r.name.replace("ex_",""),10);
+        examState.answers[i] = parseInt(r.value,10);
+        renderExam();
+      });
+    });
+  }
+
+  $("#startExam", sec).addEventListener("click", start);
+  $("#resetExam", sec).addEventListener("click", ()=>{ stopTimer(); examState=null; $("#examArea", sec).innerHTML=""; $("#examWarn", sec).textContent=""; });
+
+  return sec;
+}
+
+function renderAllPages(){
+  const wrap = $("#pages");
+  wrap.innerHTML = "";
+  wrap.appendChild(renderHome());
+  wrap.appendChild(renderTracking());
+  wrap.appendChild(renderExamPage());
+  window.APP_DATA.subjects.forEach(s=>wrap.appendChild(renderSubjectPage(s.key)));
+}
+
+function showPage(key){
+  $$("[data-page]").forEach(p=>p.style.display = (p.dataset.page===key ? "block" : "none"));
+  $$(".navbtn").forEach(b=>b.classList.toggle("active", b.dataset.nav===key));
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function setupExportImport(){
+  $("#exportBtn").addEventListener("click", ()=>{
+    const st = loadStore();
+    const payload = {
+      version: window.APP_DATA.meta.version,
+      exportedAt: new Date().toISOString(),
+      student: st.student||{},
+      tracking: st.tracking||{},
+      examHistory: st.examHistory||[],
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "suivi_revision_3ap.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+  $("#importFile").addEventListener("change", async (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    try{
+      const txt = await f.text();
+      const obj = JSON.parse(txt);
+      const st = loadStore();
+      st.student = obj.student || st.student;
+      st.tracking = obj.tracking || st.tracking;
+      st.examHistory = obj.examHistory || st.examHistory;
+      saveStore(st);
+      buildNav();
+      renderAllPages();
+      showPage("suivi");
+      alert("Import terminé ✅");
+    }catch(err){
+      alert("Fichier invalide ❌");
+    } finally {
+      e.target.value = "";
+    }
+  });
+}
+
+initSettings();
+renderAllPages();
+buildNav();
+setupExportImport();
+showPage("accueil");
+</script>
+</body>
+</html>
