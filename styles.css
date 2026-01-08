@@ -1,0 +1,35 @@
+:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; color:#0b1220;}
+body{margin:0;background:#f4f6fb;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#0b5fff;color:#fff;}
+.brand{display:flex;gap:10px;align-items:center}
+.dot{width:10px;height:10px;border-radius:999px;background:#fff;opacity:.9}
+.title{font-weight:800;line-height:1}
+.sub{opacity:.9;font-size:12px}
+.layout{display:grid;grid-template-columns:320px 1fr;gap:12px;padding:12px;max-width:1200px;margin:0 auto;}
+.panel{background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.06);height:calc(100vh - 80px);overflow:auto;}
+.content{min-height:calc(100vh - 80px)}
+.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);}
+h1{margin:0 0 12px 0;font-size:22px}
+h2{margin:10px 0;font-size:14px;opacity:.8;text-transform:uppercase;letter-spacing:.04em}
+.lesson{padding:10px 0;border-bottom:1px solid #eef1f7}
+.lesson:last-child{border-bottom:none}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{padding:10px 10px;border:1px solid #e7ebf6;border-radius:12px;background:#fff;text-align:left;font-weight:600}
+.item.active{border-color:#0b5fff;outline:2px solid rgba(11,95,255,.12)}
+.seg{display:flex;gap:8px}
+.btn{border:1px solid transparent;border-radius:12px;padding:10px 12px;font-weight:700}
+.btn.ghost{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.35)}
+.btn.primary{background:#0b5fff;color:#fff;width:100%;margin-top:10px}
+.segbtn{flex:1;background:#f0f3ff;border-color:#dfe6ff}
+.segbtn.active{background:#0b5fff;color:#fff}
+.footer{margin-top:12px;opacity:.8}
+.hint{opacity:.7}
+.quiz{display:flex;flex-direction:column;gap:10px}
+.qbox{border:1px solid #e7ebf6;border-radius:12px;padding:10px}
+.qbox.ok{border-color:#2fb344;background:rgba(47,179,68,.06)}
+.qbox.bad{border-color:#fa5252;background:rgba(250,82,82,.06)}
+.qtitle{font-weight:800;margin-bottom:8px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:10px;background:#f7f9ff;border:1px solid #eef1ff}
+.result{margin-top:10px;font-weight:900}
+@media (max-width: 900px){.layout{grid-template-columns:1fr}.panel{height:auto}}

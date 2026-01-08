@@ -1,0 +1,52 @@
+{
+  "chapters": [
+    {
+      "id": "ch1",
+      "title": "Chapitre 1 – Exemple",
+      "lessons": [
+        {
+          "title": "Leçon",
+          "text": "Ceci est un exemple. Modifie content.json pour ajouter tes vrais cours."
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Pour GitHub Pages, les liens doivent être…",
+          "options": [
+            "relatifs (./...)",
+            "absolus (/...)"
+          ],
+          "answerIndex": 0
+        },
+        {
+          "question": "Après la 1ère visite, l’app peut marcher…",
+          "options": [
+            "hors ligne",
+            "seulement en ligne"
+          ],
+          "answerIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "ch2",
+      "title": "Chapitre 2 – Ajoute ton contenu",
+      "lessons": [
+        {
+          "title": "Conseil",
+          "text": "Ajoute des chapitres dans chapters[], et des questions dans quiz[]"
+        }
+      ],
+      "quiz": [
+        {
+          "question": "Le fichier du contenu est…",
+          "options": [
+            "content.json",
+            "styles.css"
+          ],
+          "answerIndex": 0
+        }
+      ]
+    }
+  ]
+}
